@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ForgeAI App — AI Co-Pilot for Founders</title>
+  <meta name="description" content="ForgeAI workspace — your AI-powered co-pilot for building startups." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="app.css" />
+  <!-- Markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="app-body">
+
+  <!-- ── API Key Modal ──────────────────────── -->
+  <div class="modal-overlay" id="apiKeyModal">
+    <div class="modal-box">
+      <div class="modal-icon">⚡</div>
+      <h2>Welcome to ForgeAI</h2>
+      <p>To get started, add your free <strong>Google Gemini API key</strong>.<br/>It takes 60 seconds at <a href="https://aistudio.google.com" target="_blank" id="studioLink">aistudio.google.com</a></p>
+      <div class="modal-input-group">
+        <input
+          type="password"
+          id="apiKeyInput"
+          class="input-field"
+          placeholder="Paste your Gemini API key here..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="btn btn-icon" id="toggleKeyVisibility" data-tooltip="Show/hide key">
+          <svg id="eyeIcon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="modal-error" id="apiKeyError"></div>
+      <button class="btn btn-primary" id="saveApiKey" style="width:100%;justify-content:center;">
+        Save & Launch ForgeAI →
+      </button>
+      <p class="modal-note">🔒 Stored locally in your browser. Never sent to our servers.</p>
+    </div>
+  </div>
+
+  <!-- ── App Shell ──────────────────────────── -->
+  <div class="app-shell" id="appShell" style="display:none">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="nav-logo" style="font-size:1.1rem">
+          <span class="logo-icon" style="font-size:1.2rem">⚡</span>
+          <span>Forge<span class="text-gradient">AI</span></span>
+        </a>
+        <button class="btn btn-icon sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- New Chat -->
+      <button class="new-chat-btn" id="newChatBtn">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        New Chat
+      </button>
+
+      <!-- Playbooks Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Playbooks</div>
+        <div class="playbook-list" id="playbookList">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Projects Section -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label" style="justify-content:space-between;display:flex;align-items:center;">
+          Projects
+          <button class="btn-add-project" id="addProjectBtn" data-tooltip="New project">+</button>
+        </div>
+        <div class="project-list" id="projectList">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-foot-btn" id="settingsBtn">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+        <button class="sidebar-foot-btn" id="changeKeyBtn">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 7a2 2 0 0 1 2 2m4 0a6 6 0 0 1-7.743 5.743L11 17H9v2H7v2H4a1 1 0 0 1-1-1v-2.586a1 1 0 0 1 .293-.707l5.964-5.964A6 6 0 1 1 21 9z"/></svg>
+          Change API Key
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Area -->
+    <main class="main-area">
+
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="top-left">
+          <button class="btn btn-icon" id="sidebarToggle" aria-label="Toggle sidebar">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="active-context" id="activeContext">
+            <span id="activePlaybookName">General Chat</span>
+          </div>
+        </div>
+        <div class="top-right">
+          <button class="btn btn-icon" id="exportBtn" data-tooltip="Export chat">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="btn btn-icon" id="clearChatBtn" data-tooltip="Clear chat">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+          <button class="btn btn-icon" id="contextPanelToggle" data-tooltip="Startup context">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Welcome / Playbook Picker (shown when no messages) -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-glow"></div>
+        <div class="welcome-content">
+          <div class="welcome-icon">⚡</div>
+          <h1 class="welcome-title">What are we building today?</h1>
+          <p class="welcome-sub">Pick a playbook to start with expert guidance, or just start chatting.</p>
+          <div class="welcome-playbooks" id="welcomePlaybooks">
+            <!-- Injected by JS -->
+          </div>
+          <div class="welcome-input-hint">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Or just type your question below
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="chat-messages" id="chatMessages" style="display:none">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Chat Input Area -->
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <textarea
+            id="chatInput"
+            class="chat-textarea"
+            placeholder="Ask anything about your startup..."
+            rows="1"
+            maxlength="8000"
+          ></textarea>
+          <div class="input-actions">
+            <span class="char-count" id="charCount">0 / 8000</span>
+            <button class="send-btn" id="sendBtn" aria-label="Send message">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+        <p class="input-disclaimer">ForgeAI uses Google Gemini. Your API key never leaves your browser.</p>
+      </div>
+    </main>
+
+    <!-- Context Panel (Startup Info) -->
+    <aside class="context-panel" id="contextPanel">
+      <div class="cp-header">
+        <h3>
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Startup Context
+        </h3>
+        <button class="btn btn-icon" id="cpClose" style="width:28px;height:28px;" aria-label="Close panel">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <p class="cp-desc">Tell ForgeAI about your startup. This context is included in every message automatically.</p>
+      <div class="cp-form" id="contextForm">
+        <div class="cp-field">
+          <label for="ctxName">Startup Name</label>
+          <input type="text" id="ctxName" class="input-field" placeholder="e.g. Acme Inc." />
+        </div>
+        <div class="cp-field">
+          <label for="ctxStage">Stage</label>
+          <select id="ctxStage" class="input-field">
+            <option value="">Select stage...</option>
+            <option>Idea / Pre-Product</option>
+            <option>MVP / Early Traction</option>
+            <option>Post-Revenue / PMF</option>
+            <option>Scaling / Series A+</option>
+          </select>
+        </div>
+        <div class="cp-field">
+          <label for="ctxMarket">Target Market</label>
+          <input type="text" id="ctxMarket" class="input-field" placeholder="e.g. SMB SaaS in healthcare" />
+        </div>
+        <div class="cp-field">
+          <label for="ctxProblem">Core Problem You Solve</label>
+          <textarea id="ctxProblem" class="input-field" rows="3" placeholder="Describe the problem in 1-2 sentences..."></textarea>
+        </div>
+        <div class="cp-field">
+          <label for="ctxRevenue">Monthly Revenue (MRR)</label>
+          <input type="text" id="ctxRevenue" class="input-field" placeholder="e.g. $0, $2k, $15k" />
+        </div>
+        <div class="cp-field">
+          <label for="ctxGoal">Top Goal Right Now</label>
+          <input type="text" id="ctxGoal" class="input-field" placeholder="e.g. Close seed round by Q4" />
+        </div>
+        <button class="btn btn-primary" id="saveContextBtn" style="width:100%;justify-content:center;">
+          💾 Save Context
+        </button>
+        <div class="cp-saved" id="ctxSavedMsg">✓ Context saved!</div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h3>⚙️ Settings</h3>
+        <button class="btn btn-icon" id="settingsClose">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-group">
+          <label>API Key</label>
+          <div class="flex gap-2">
+            <input type="password" id="settingsKeyInput" class="input-field" placeholder="Your Gemini API key" />
+            <button class="btn btn-secondary btn-sm" id="updateKeyBtn">Update</button>
+          </div>
+          <p class="setting-hint">Get a free key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></p>
+        </div>
+        <div class="setting-group">
+          <label>AI Model</label>
+          <select id="modelSelect" class="input-field">
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Default — Free)</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro (More capable)</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Fastest)</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label>Plan</label>
+          <div class="plan-display">
+            <span class="badge badge-accent">Free Plan</span>
+            <a href="index.html#pricing" class="btn btn-primary btn-sm">Upgrade →</a>
+          </div>
+          <p class="setting-hint">20 messages/day on Free. Upgrade for unlimited.</p>
+        </div>
+        <div class="setting-group">
+          <label class="danger-label">Danger Zone</label>
+          <button class="btn btn-secondary btn-sm" id="clearAllDataBtn" style="border-color:rgba(244,63,94,0.4);color:#F43F5E">
+            Clear All Data
+          </button>
+          <p class="setting-hint" style="color:rgba(244,63,94,0.6)">Deletes all chats, projects, and context from browser storage.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
