@@ -216,10 +216,7 @@ function loadApp(preselectedPlaybook = null) {
 saveApiKeyBtn?.addEventListener('click', async () => {
   const key = apiKeyInput.value.trim();
   if (!key) { apiKeyError.textContent = 'Please enter your API key.'; return; }
-  if (!key.startsWith('AI')) {
-    apiKeyError.textContent = 'That doesn\'t look like a Gemini key. It should start with "AI".';
-    return;
-  }
+  
   apiKeyError.textContent = '';
   saveApiKeyBtn.textContent = 'Validating...';
   saveApiKeyBtn.disabled = true;
