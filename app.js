@@ -5,7 +5,7 @@
 // ── State ─────────────────────────────────────
 const state = {
   apiKey: '',
-  model: 'gemini-2.0-flash',
+  model: 'gemini-1.5-flash',
   messages: [],         // { role: 'user'|'model', parts: [{text}] }
   activePlaybook: null, // playbook key string
   projects: [],         // [{id, name, messages, playbook}]
@@ -176,7 +176,7 @@ function showToast(msg, duration = 2800) {
 function init() {
   // Load saved state
   state.apiKey     = LS.get('apiKey', '');
-  state.model      = LS.get('model', 'gemini-2.0-flash');
+  state.model      = LS.get('model', 'gemini-1.5-flash');
   state.projects   = LS.get('projects', []);
   state.context    = LS.get('context', {});
   state.messageCount = LS.get('msgCount', 0);
@@ -239,16 +239,15 @@ saveApiKeyBtn?.addEventListener('click', async () => {
   saveApiKeyBtn.textContent = 'Validating...';
   saveApiKeyBtn.disabled = true;
 
-  // Quick validation call
-  const valid = await validateApiKey(key);
-  if (valid) {
+  const validationResult = await validateApiKey(key);
+  if (validationResult.valid) {
     state.apiKey = key;
     LS.set('apiKey', key);
     apiKeyModal.classList.add('hidden');
     appShell.style.display = 'grid';
     loadApp();
   } else {
-    apiKeyError.textContent = 'Invalid API key. Please check and try again.';
+    apiKeyError.textContent = validationResult.error || 'Invalid API key. Please check and try again.';
     saveApiKeyBtn.textContent = 'Save & Launch ForgeAI →';
     saveApiKeyBtn.disabled = false;
   }
@@ -276,15 +275,21 @@ changeKeyBtn?.addEventListener('click', () => {
 async function validateApiKey(key) {
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Hi' }] }] })
       }
     );
-    return res.ok;
-  } catch { return false; }
+    if (res.ok) return { valid: true };
+    
+    const errData = await res.json().catch(() => ({}));
+    const msg = errData?.error?.message || `HTTP ${res.status}`;
+    return { valid: false, error: 'Validation failed: ' + msg };
+  } catch (err) { 
+    return { valid: false, error: 'Network error checking key.' }; 
+  }
 }
 
 // ── Sidebar Playbook List ─────────────────────
