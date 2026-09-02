@@ -99,6 +99,15 @@ Work through the Lean Canvas with the founder: Problem, Customer Segments, Uniqu
     system: `You are a growth expert who has driven growth at multiple startups from $0 to $10M ARR. You think in AARRR metrics (Acquisition, Activation, Retention, Revenue, Referral) and high-leverage experiments.
 
 Help the founder: audit their current growth metrics, identify the biggest bottleneck, brainstorm high-ROI growth experiments, prioritize by impact vs. effort, and build a 30-day growth sprint plan. Be specific — real tactics with real examples, not generic advice. Think scrappy and founder-led, not agency-driven.`
+  },
+  {
+    key: 'cold-outreach',
+    icon: '📧',
+    name: 'Cold Outreach',
+    description: 'High-converting sales emails & LinkedIn DMs',
+    system: `You are a B2B sales expert who has written cold email and LinkedIn outreach sequences that generated millions in pipeline. You specialize in short, punchy, personalized outreach that gets high open and reply rates.
+
+Help the founder craft cold outreach sequences. Focus on: grabbing attention in the first line, keeping it under 100 words, focusing on the prospect's pain point (not the product's features), and using a low-friction call to action. Provide the exact templates and follow-up sequence.`
   }
 ];
 
@@ -127,6 +136,7 @@ const cpClose         = $('cpClose');
 const contextPanel    = $('contextPanel');
 const sidebar         = $('sidebar');
 const activePlaybookName = $('activePlaybookName');
+const exportPdfBtn    = $('exportPdfBtn');
 const exportBtn       = $('exportBtn');
 const clearChatBtn    = $('clearChatBtn');
 const settingsBtn     = $('settingsBtn');
@@ -172,9 +182,17 @@ function init() {
   state.messageCount = LS.get('msgCount', 0);
   state.activeProjectId = LS.get('activeProject', null);
 
-  // Check URL params for playbook pre-selection
+  // Check URL params for playbook pre-selection or upgrades
   const urlParams = new URLSearchParams(window.location.search);
   const pbParam = urlParams.get('playbook');
+  const upgradeParam = urlParams.get('upgrade');
+
+  if (upgradeParam === 'success') {
+    LS.set('isPro', true);
+    // Remove the param from URL without reloading
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => showToast('🎉 Upgrade successful! Welcome to Founder Pro.'), 1000);
+  }
 
   if (!state.apiKey) {
     apiKeyModal.classList.remove('hidden');
@@ -338,6 +356,7 @@ function getPlaybookGreeting(pb) {
     'competitor-analysis': `🔍 **Competitor Analysis activated!**\n\n${ctxNote}\n\nLet's map your competitive landscape and find your positioning.\n\n**Who do you see as your main competitors?** List 2-5 names — they can be direct competitors, alternatives, or even "status quo" (how people solve this today without you).`,
     'business-model-canvas': `🗃️ **Business Model Canvas activated!**\n\nLet's work through the Lean Canvas together. This will sharpen your business model and reveal any hidden risks.\n\n${ctxNote}\n\n**Start here:** Describe your target customer in one sentence, and the #1 problem you're solving for them.`,
     'growth-hacking': `📈 **Growth Hacking activated!**\n\n${ctxNote}\n\nLet's find your highest-leverage growth moves.\n\n**Quick growth audit:** What's your current monthly active users / MRR, your main acquisition channel right now, and where do you feel most stuck in growth?`,
+    'cold-outreach': `📧 **Cold Outreach activated!**\n\nLet's write a cold sequence that actually gets replies.\n\n${ctxNote}\n\n**To start:** Who exactly are you reaching out to (job title/industry) and what is the specific pain point you want to highlight in the first email?`,
   };
   return greetings[pb.key] || `Welcome! I'm ready to help with **${pb.name}**. What would you like to work on?`;
 }
@@ -754,6 +773,47 @@ exportBtn?.addEventListener('click', () => {
   a.click();
   URL.revokeObjectURL(url);
   showToast('✓ Chat exported as Markdown');
+});
+
+// ── Export Chat (PDF) ─────────────────────────
+exportPdfBtn?.addEventListener('click', () => {
+  if (state.messages.length === 0) { showToast('No messages to export.'); return; }
+  
+  if (typeof html2pdf === 'undefined') {
+    showToast('⚠️ PDF library is still loading. Try again in a moment.');
+    return;
+  }
+  
+  showToast('Generating PDF...');
+  const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
+  const filename = `forgeai-${pb.key}-${Date.now()}.pdf`;
+  
+  const opt = {
+    margin:       10,
+    filename:     filename,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0f1423' },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  
+  // Clone the messages div so we can style it for PDF without messing up the UI
+  const elementToPrint = chatMessages.cloneNode(true);
+  elementToPrint.style.display = 'block';
+  elementToPrint.style.height = 'auto';
+  elementToPrint.style.overflow = 'visible';
+  elementToPrint.style.padding = '20px';
+  elementToPrint.style.backgroundColor = '#0f1423'; 
+  
+  // Clean up action buttons in the clone
+  const actionBtns = elementToPrint.querySelectorAll('.msg-actions');
+  actionBtns.forEach(btn => btn.remove());
+  
+  html2pdf().set(opt).from(elementToPrint).save().then(() => {
+    showToast('✓ PDF Exported');
+  }).catch(err => {
+    console.error(err);
+    showToast('⚠️ Error generating PDF');
+  });
 });
 
 // ── Clear Chat ────────────────────────────────
