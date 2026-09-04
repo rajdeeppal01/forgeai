@@ -28,7 +28,7 @@ const PLAYBOOKS = [
   },
   {
     key: 'pitch-deck',
-    icon: '🚀',
+    icon: '',
     name: 'Pitch Deck Builder',
     description: 'VC-grade pitch deck, slide by slide',
     system: `You are a world-class pitch deck consultant who has helped startups raise over $500M in funding from top VCs including a16z, Sequoia, and YC. Your job is to help the founder build a compelling investor pitch deck slide by slide.
@@ -39,7 +39,7 @@ For each slide: give the recommended content, a strong headline, key bullet poin
   },
   {
     key: 'gtm-strategy',
-    icon: '📊',
+    icon: '',
     name: 'GTM Strategy',
     description: 'Go-to-market from zero to first 100 customers',
     system: `You are a go-to-market expert who has helped B2B and B2C startups acquire their first 10,000 customers. You specialize in designing lean, high-ROI go-to-market strategies for early-stage startups.
@@ -48,7 +48,7 @@ Help the founder build a complete GTM plan including: ICP definition, channel se
   },
   {
     key: 'fundraising',
-    icon: '💰',
+    icon: '',
     name: 'Fundraising Prep',
     description: 'Craft your narrative, handle tough investor questions',
     system: `You are a fundraising coach who has helped 50+ startups close seed, Series A, and Series B rounds. You know exactly what VCs look for and how to craft a compelling fundraising narrative.
@@ -57,7 +57,7 @@ Help the founder: structure their fundraising story, prepare for tough investor 
   },
   {
     key: 'icp-workshop',
-    icon: '🎯',
+    icon: '',
     name: 'ICP Workshop',
     description: 'Define your ideal customer with precision',
     system: `You are a B2B sales and marketing strategist who specializes in Ideal Customer Profile (ICP) development. You've helped dozens of startups go from "we serve everyone" to laser-focused targeting that 10x'd their conversion rates.
@@ -66,7 +66,7 @@ Run a structured workshop to help the founder: identify their best-fit customer 
   },
   {
     key: 'one-pager',
-    icon: '📝',
+    icon: '',
     name: 'One-Pager Generator',
     description: 'Crisp executive summary for partners & investors',
     system: `You are an expert at distilling complex startup stories into crisp, compelling one-page executive summaries. These are used for investor outreach, partnership proposals, and PR.
@@ -75,7 +75,7 @@ Help the founder create a one-pager that covers: the hook (one-liner), problem, 
   },
   {
     key: 'competitor-analysis',
-    icon: '🔍',
+    icon: '',
     name: 'Competitor Analysis',
     description: 'Deep-dive your competitive landscape',
     system: `You are a competitive intelligence expert who helps startups understand their market landscape and find their defensible position. You think in terms of Porter's Five Forces, Jobs-to-be-Done, and strategic positioning.
@@ -84,7 +84,7 @@ Help the founder: map their competitive landscape (direct, indirect, substitute)
   },
   {
     key: 'business-model-canvas',
-    icon: '🗃️',
+    icon: '🗃',
     name: 'Business Model Canvas',
     description: 'Map value props, channels, and revenue streams',
     system: `You are a business model design expert, trained in the Business Model Canvas (Osterwalder), Lean Canvas, and Value Proposition Design methodologies. You've helped 100+ startups pressure-test and refine their business models.
@@ -93,7 +93,7 @@ Work through the Lean Canvas with the founder: Problem, Customer Segments, Uniqu
   },
   {
     key: 'growth-hacking',
-    icon: '📈',
+    icon: '',
     name: 'Growth Hacking',
     description: 'Highest-leverage growth levers for your stage',
     system: `You are a growth expert who has driven growth at multiple startups from $0 to $10M ARR. You think in AARRR metrics (Acquisition, Activation, Retention, Revenue, Referral) and high-leverage experiments.
@@ -353,14 +353,14 @@ function getPlaybookGreeting(pb) {
     : `First, a quick tip: fill out your **Startup Context** (right panel) so I can give you tailored advice.`;
 
   const greetings = {
-    'pitch-deck': `🚀 **Pitch Deck Builder activated!**\n\n${ctxNote}\n\nI'm going to help you build a VC-grade pitch deck slide by slide. Let's start with the foundation:\n\n**What problem does your startup solve, and for whom?** (Don't overthink it — just tell me like you're talking to a friend.)`,
-    'gtm-strategy': `📊 **GTM Strategy activated!**\n\n${ctxNote}\n\nLet's build your go-to-market strategy from the ground up.\n\n**Quick question to start:** Are you targeting B2B or B2C, and what stage are you at — pre-launch, just launched, or have some customers already?`,
-    'fundraising': `💰 **Fundraising Prep activated!**\n\nI'm your fundraising coach. I'll help you craft a compelling narrative, prep for tough questions, and think through your investor outreach.\n\n**Let's start here:** Are you raising now, or planning to raise in the next 1-6 months? And what round (pre-seed, seed, Series A)?`,
-    'icp-workshop': `🎯 **ICP Workshop activated!**\n\nLet's nail your Ideal Customer Profile — this is the most important work you'll do for sales and marketing.\n\n${ctxNote}\n\n**First question:** Who are your current customers or who do you imagine buying this first? Tell me whatever you know — industry, company size, job title, anything.`,
-    'one-pager': `📝 **One-Pager Generator activated!**\n\nLet's create a crisp, compelling executive summary that gets replies from investors and partners.\n\n**To start: what's your startup's one-liner?** (The single sentence that explains what you do and for whom.)`,
-    'competitor-analysis': `🔍 **Competitor Analysis activated!**\n\n${ctxNote}\n\nLet's map your competitive landscape and find your positioning.\n\n**Who do you see as your main competitors?** List 2-5 names — they can be direct competitors, alternatives, or even "status quo" (how people solve this today without you).`,
-    'business-model-canvas': `🗃️ **Business Model Canvas activated!**\n\nLet's work through the Lean Canvas together. This will sharpen your business model and reveal any hidden risks.\n\n${ctxNote}\n\n**Start here:** Describe your target customer in one sentence, and the #1 problem you're solving for them.`,
-    'growth-hacking': `📈 **Growth Hacking activated!**\n\n${ctxNote}\n\nLet's find your highest-leverage growth moves.\n\n**Quick growth audit:** What's your current monthly active users / MRR, your main acquisition channel right now, and where do you feel most stuck in growth?`,
+    'pitch-deck': ` **Pitch Deck Builder activated!**\n\n${ctxNote}\n\nI'm going to help you build a VC-grade pitch deck slide by slide. Let's start with the foundation:\n\n**What problem does your startup solve, and for whom?** (Don't overthink it — just tell me like you're talking to a friend.)`,
+    'gtm-strategy': ` **GTM Strategy activated!**\n\n${ctxNote}\n\nLet's build your go-to-market strategy from the ground up.\n\n**Quick question to start:** Are you targeting B2B or B2C, and what stage are you at — pre-launch, just launched, or have some customers already?`,
+    'fundraising': ` **Fundraising Prep activated!**\n\nI'm your fundraising coach. I'll help you craft a compelling narrative, prep for tough questions, and think through your investor outreach.\n\n**Let's start here:** Are you raising now, or planning to raise in the next 1-6 months? And what round (pre-seed, seed, Series A)?`,
+    'icp-workshop': ` **ICP Workshop activated!**\n\nLet's nail your Ideal Customer Profile — this is the most important work you'll do for sales and marketing.\n\n${ctxNote}\n\n**First question:** Who are your current customers or who do you imagine buying this first? Tell me whatever you know — industry, company size, job title, anything.`,
+    'one-pager': ` **One-Pager Generator activated!**\n\nLet's create a crisp, compelling executive summary that gets replies from investors and partners.\n\n**To start: what's your startup's one-liner?** (The single sentence that explains what you do and for whom.)`,
+    'competitor-analysis': ` **Competitor Analysis activated!**\n\n${ctxNote}\n\nLet's map your competitive landscape and find your positioning.\n\n**Who do you see as your main competitors?** List 2-5 names — they can be direct competitors, alternatives, or even "status quo" (how people solve this today without you).`,
+    'business-model-canvas': `🗃 **Business Model Canvas activated!**\n\nLet's work through the Lean Canvas together. This will sharpen your business model and reveal any hidden risks.\n\n${ctxNote}\n\n**Start here:** Describe your target customer in one sentence, and the #1 problem you're solving for them.`,
+    'growth-hacking': ` **Growth Hacking activated!**\n\n${ctxNote}\n\nLet's find your highest-leverage growth moves.\n\n**Quick growth audit:** What's your current monthly active users / MRR, your main acquisition channel right now, and where do you feel most stuck in growth?`,
     'cold-outreach': `📧 **Cold Outreach activated!**\n\nLet's write a cold sequence that actually gets replies.\n\n${ctxNote}\n\n**To start:** Who exactly are you reaching out to (job title/industry) and what is the specific pain point you want to highlight in the first email?`,
   };
   return greetings[pb.key] || `Welcome! I'm ready to help with **${pb.name}**. What would you like to work on?`;
@@ -529,7 +529,7 @@ sendBtn?.addEventListener('click', sendMessage);
 async function sendMessage() {
   const text = chatInput.value.trim();
   if (!text || state.isLoading) return;
-  if (!state.apiKey) { showToast('⚠️ Please add your API key first.'); return; }
+  if (!state.apiKey) { showToast('⚠ Please add your API key first.'); return; }
 
   // Free tier limit (20/day)
   const today = new Date().toDateString();
@@ -539,7 +539,7 @@ async function sendMessage() {
     LS.set('lastDay', today);
   }
   if (state.messageCount >= 20 && !LS.get('isPro', false)) {
-    showToast('📊 Daily limit reached. Upgrade to Builder for unlimited messages!');
+    showToast(' Daily limit reached. Upgrade to Builder for unlimited messages!');
     showUpgradeBanner();
     return;
   }
@@ -587,7 +587,7 @@ async function sendMessage() {
     autoSave();
   } catch (err) {
     removeTypingIndicator();
-    appendMessage('model', `⚠️ **Error:** ${err.message}\n\nPlease check your API key or try again.`, formatTime());
+    appendMessage('model', `⚠ **Error:** ${err.message}\n\nPlease check your API key or try again.`, formatTime());
     scrollToBottom();
   } finally {
     state.isLoading = false;
@@ -658,7 +658,7 @@ function appendMessage(role, text, time, animate = true) {
 
   const avatar = document.createElement('div');
   avatar.className = `msg-avatar ${isUser ? 'user-avatar-msg' : 'ai-avatar'}`;
-  avatar.textContent = isUser ? getUserInitial() : '⚡';
+  avatar.textContent = isUser ? getUserInitial() : '';
 
   const body = document.createElement('div');
   body.className = 'msg-body';
@@ -725,7 +725,7 @@ function showTypingIndicator() {
 
   const avatar = document.createElement('div');
   avatar.className = 'msg-avatar ai-avatar';
-  avatar.textContent = '⚡';
+  avatar.textContent = '';
 
   const bubble = document.createElement('div');
   bubble.className = 'typing-bubble';
@@ -785,7 +785,7 @@ exportPdfBtn?.addEventListener('click', () => {
   if (state.messages.length === 0) { showToast('No messages to export.'); return; }
   
   if (typeof html2pdf === 'undefined') {
-    showToast('⚠️ PDF library is still loading. Try again in a moment.');
+    showToast('⚠ PDF library is still loading. Try again in a moment.');
     return;
   }
   
@@ -817,7 +817,7 @@ exportPdfBtn?.addEventListener('click', () => {
     showToast('✓ PDF Exported');
   }).catch(err => {
     console.error(err);
-    showToast('⚠️ Error generating PDF');
+    showToast('⚠ Error generating PDF');
   });
 });
 
@@ -919,7 +919,7 @@ function showUpgradeBanner() {
     max-width: 460px; width: calc(100% - 48px);
   `;
   banner.innerHTML = `
-    <span style="font-size:1.2rem">⚡</span>
+    <span style="font-size:1.2rem"></span>
     <span><strong>Daily limit reached!</strong> Upgrade to Builder for unlimited AI messages.</span>
     <a href="index.html#pricing" style="background:white;color:#7C3AED;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.82rem;white-space:nowrap;">Upgrade →</a>
     <button onclick="this.parentElement.remove()" style="background:none;color:rgba(255,255,255,0.7);font-size:1.2rem;cursor:pointer;padding:0 4px;">×</button>
