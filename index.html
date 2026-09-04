@@ -94,8 +94,35 @@
           </div>
           <div class="chrome-url">app.forgeai.co</div>
         </div>
-        <div class="preview-video" style="background: var(--bg-secondary);">
-          <img src="demo.webp" alt="ForgeAI Product Demo" style="width: 100%; height: auto; display: block;" />
+        <div class="preview-video coded-demo" style="background: var(--bg-primary);">
+          <div class="demo-sidebar">
+            <div class="demo-skeleton-title"></div>
+            <div class="demo-skeleton-item"></div>
+            <div class="demo-skeleton-item"></div>
+            <div class="demo-skeleton-item"></div>
+          </div>
+          <div class="demo-main">
+            <div class="demo-header">
+              <div class="demo-skeleton-title" style="width: 120px;"></div>
+            </div>
+            <div class="demo-body">
+              <div class="demo-msg user-msg">
+                <span id="typewriterText"></span><span class="cursor"></span>
+              </div>
+              <div class="demo-msg ai-msg" id="aiResponse" style="opacity: 0;">
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+                <div class="ai-content" style="display: none;">
+                  <div class="demo-skeleton-title" style="width: 60%; margin-bottom: 12px;"></div>
+                  <div class="demo-skeleton-text"></div>
+                  <div class="demo-skeleton-text"></div>
+                  <div class="demo-skeleton-text" style="width: 80%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-input-bar">
+              <div class="demo-input-box">Generating Go-to-Market Strategy...</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

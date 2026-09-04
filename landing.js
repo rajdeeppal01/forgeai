@@ -149,14 +149,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Typing animation in hero preview ──────
-  // (Already handled by CSS animation - just add stagger restart)
-  const typingDots = document.querySelector('.typing-preview .typing-dots');
-  if (typingDots) {
-    setInterval(() => {
-      typingDots.style.display = 'none';
-      setTimeout(() => typingDots.style.display = 'flex', 100);
-    }, 3000);
+  // ── Coded Demo Animation ──────────────────
+  const typeText = "Generate a Go-to-Market Strategy for a B2B SaaS";
+  const typeTarget = document.getElementById('typewriterText');
+  const aiMsg = document.getElementById('aiResponse');
+  const aiDots = aiMsg?.querySelector('.typing-dots');
+  const aiContent = aiMsg?.querySelector('.ai-content');
+  
+  if (typeTarget && aiMsg) {
+    let charIndex = 0;
+    
+    function startDemo() {
+      // Reset
+      typeTarget.textContent = '';
+      aiMsg.style.opacity = '0';
+      aiDots.style.display = 'flex';
+      aiContent.style.display = 'none';
+      charIndex = 0;
+      
+      setTimeout(typeWriter, 1000);
+    }
+    
+    function typeWriter() {
+      if (charIndex < typeText.length) {
+        typeTarget.textContent += typeText.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeWriter, Math.random() * 50 + 30);
+      } else {
+        setTimeout(showAIResponse, 600);
+      }
+    }
+    
+    function showAIResponse() {
+      aiMsg.style.opacity = '1';
+      setTimeout(() => {
+        aiDots.style.display = 'none';
+        aiContent.style.display = 'block';
+        setTimeout(startDemo, 5000); // Loop the demo
+      }, 1500);
+    }
+    
+    // Start on Intersection to ensure it's visible
+    const demoObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        startDemo();
+        demoObserver.disconnect();
+      }
+    }, { threshold: 0.5 });
+    
+    demoObserver.observe(document.querySelector('.coded-demo'));
   }
-
 });

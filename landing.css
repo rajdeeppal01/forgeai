@@ -518,3 +518,101 @@
   .footer-links { grid-template-columns: repeat(2,1fr); }
   .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
 }
+
+/* ── Coded Demo Animation ───────────────────────── */
+.coded-demo {
+  display: flex;
+  height: 400px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+}
+.demo-sidebar {
+  width: 25%;
+  border-right: 1px solid var(--border);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.demo-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.demo-header {
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+.demo-body {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+.demo-msg {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.user-msg {
+  align-self: flex-end;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-bottom-right-radius: 4px;
+}
+.ai-msg {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  transition: opacity 0.5s ease-in;
+}
+.demo-input-bar {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+.demo-input-box {
+  padding: 12px 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+}
+.demo-skeleton-title {
+  height: 12px;
+  background: var(--border-accent);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.demo-skeleton-item {
+  height: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.demo-skeleton-text {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: currentColor;
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
