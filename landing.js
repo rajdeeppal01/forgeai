@@ -1,5 +1,5 @@
 // =============================================
-// ForgeAI — Landing Page JS
+// ForgeAI - Landing Page JS
 // =============================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,49 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     a.addEventListener('click', () => navMobile.classList.remove('open'));
   });
 
-  // ── Fade-up Intersection Observer ─────────
-  const fadeEls = document.querySelectorAll('.fade-up');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  fadeEls.forEach(el => observer.observe(el));
-
-  // ── Animated Counters ─────────────────────
-  function animateCounter(el) {
-    const target = parseFloat(el.dataset.count);
-    const isDecimal = String(target).includes('.');
-    const duration = 1800;
-    const start = performance.now();
-    const startVal = 0;
-    function step(now) {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-      const val = startVal + (target - startVal) * eased;
-      el.textContent = isDecimal
-        ? val.toFixed(1)
-        : Math.round(val).toLocaleString();
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCounter(entry.target);
-        statObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
-
-  document.querySelectorAll('.stat-number[data-count]').forEach(el => {
-    statObserver.observe(el);
-  });
+  // Animations removed per de-vibing rules
 
   // ── FAQ Accordion ─────────────────────────
   document.querySelectorAll('.faq-question').forEach(btn => {
@@ -149,54 +107,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Coded Demo Animation ──────────────────
-  const typeText = "Generate a Go-to-Market Strategy for a B2B SaaS";
-  const typeTarget = document.getElementById('typewriterText');
-  const aiMsg = document.getElementById('aiResponse');
-  const aiDots = aiMsg?.querySelector('.typing-dots');
-  const aiContent = aiMsg?.querySelector('.ai-content');
-  
-  if (typeTarget && aiMsg) {
-    let charIndex = 0;
-    
-    function startDemo() {
-      // Reset
-      typeTarget.textContent = '';
-      aiMsg.style.opacity = '0';
-      aiDots.style.display = 'flex';
-      aiContent.style.display = 'none';
-      charIndex = 0;
-      
-      setTimeout(typeWriter, 1000);
-    }
-    
-    function typeWriter() {
-      if (charIndex < typeText.length) {
-        typeTarget.textContent += typeText.charAt(charIndex);
-        charIndex++;
-        setTimeout(typeWriter, Math.random() * 50 + 30);
-      } else {
-        setTimeout(showAIResponse, 600);
-      }
-    }
-    
-    function showAIResponse() {
-      aiMsg.style.opacity = '1';
-      setTimeout(() => {
-        aiDots.style.display = 'none';
-        aiContent.style.display = 'block';
-        setTimeout(startDemo, 5000); // Loop the demo
-      }, 1500);
-    }
-    
-    // Start on Intersection to ensure it's visible
-    const demoObserver = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        startDemo();
-        demoObserver.disconnect();
-      }
-    }, { threshold: 0.5 });
-    
-    demoObserver.observe(document.querySelector('.coded-demo'));
-  }
+  // Coded Demo Animation removed per de-vibing rules
 });

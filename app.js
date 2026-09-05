@@ -1,5 +1,5 @@
 // =============================================
-// ForgeAI — App Logic & Gemini Integration
+// ForgeAI - App Logic & Gemini Integration
 // =============================================
 
 // ── State ─────────────────────────────────────
@@ -24,7 +24,7 @@ const PLAYBOOKS = [
     icon: '💬',
     name: 'General Chat',
     description: 'Open-ended AI for any startup question',
-    system: `You are ForgeAI, an expert AI co-pilot for founders and entrepreneurs. You have deep knowledge of startups, fundraising, product-market fit, growth, marketing, and business strategy. You think like a YC partner — direct, practical, and data-driven. Format your responses with clear structure using markdown. Be concise but thorough. Always give actionable advice.`
+    system: `You are ForgeAI, an expert AI co-pilot for founders and entrepreneurs. You have deep knowledge of startups, fundraising, product-market fit, growth, marketing, and business strategy. You think like a YC partner - direct, practical, and data-driven. Format your responses with clear structure using markdown. Be concise but thorough. Always give actionable advice.`
   },
   {
     key: 'pitch-deck',
@@ -44,7 +44,7 @@ For each slide: give the recommended content, a strong headline, key bullet poin
     description: 'Go-to-market from zero to first 100 customers',
     system: `You are a go-to-market expert who has helped B2B and B2C startups acquire their first 10,000 customers. You specialize in designing lean, high-ROI go-to-market strategies for early-stage startups.
 
-Help the founder build a complete GTM plan including: ICP definition, channel selection, messaging, pricing strategy, sales motion, and 90-day launch plan. Ask for their startup context. Be specific with tactics — not vague "post on social media" but "send 20 cold LinkedIn DMs per day with this exact script...". Think in terms of what works at their current stage, not what Fortune 500 companies do.`
+Help the founder build a complete GTM plan including: ICP definition, channel selection, messaging, pricing strategy, sales motion, and 90-day launch plan. Ask for their startup context. Be specific with tactics - not vague "post on social media" but "send 20 cold LinkedIn DMs per day with this exact script...". Think in terms of what works at their current stage, not what Fortune 500 companies do.`
   },
   {
     key: 'fundraising',
@@ -53,7 +53,7 @@ Help the founder build a complete GTM plan including: ICP definition, channel se
     description: 'Craft your narrative, handle tough investor questions',
     system: `You are a fundraising coach who has helped 50+ startups close seed, Series A, and Series B rounds. You know exactly what VCs look for and how to craft a compelling fundraising narrative.
 
-Help the founder: structure their fundraising story, prepare for tough investor questions, craft the right email outreach, build their target investor list strategy, and handle common objections. Role-play as a tough investor when needed. Be honest — if something is a red flag, say so and suggest how to fix it.`
+Help the founder: structure their fundraising story, prepare for tough investor questions, craft the right email outreach, build their target investor list strategy, and handle common objections. Role-play as a tough investor when needed. Be honest - if something is a red flag, say so and suggest how to fix it.`
   },
   {
     key: 'icp-workshop',
@@ -62,7 +62,7 @@ Help the founder: structure their fundraising story, prepare for tough investor 
     description: 'Define your ideal customer with precision',
     system: `You are a B2B sales and marketing strategist who specializes in Ideal Customer Profile (ICP) development. You've helped dozens of startups go from "we serve everyone" to laser-focused targeting that 10x'd their conversion rates.
 
-Run a structured workshop to help the founder: identify their best-fit customer segments, define firmographic and psychographic criteria, understand the buyer's journey, identify decision-makers vs. influencers, and create a concrete ICP document they can share with their team. Ask questions progressively — don't overwhelm with everything at once.`
+Run a structured workshop to help the founder: identify their best-fit customer segments, define firmographic and psychographic criteria, understand the buyer's journey, identify decision-makers vs. influencers, and create a concrete ICP document they can share with their team. Ask questions progressively - don't overwhelm with everything at once.`
   },
   {
     key: 'one-pager',
@@ -71,7 +71,7 @@ Run a structured workshop to help the founder: identify their best-fit customer 
     description: 'Crisp executive summary for partners & investors',
     system: `You are an expert at distilling complex startup stories into crisp, compelling one-page executive summaries. These are used for investor outreach, partnership proposals, and PR.
 
-Help the founder create a one-pager that covers: the hook (one-liner), problem, solution, market opportunity, traction, team, and ask — all in a scannable format that takes 60 seconds to read and leaves the reader wanting more. After drafting, help them refine every line until it's sharp and punchy.`
+Help the founder create a one-pager that covers: the hook (one-liner), problem, solution, market opportunity, traction, team, and ask - all in a scannable format that takes 60 seconds to read and leaves the reader wanting more. After drafting, help them refine every line until it's sharp and punchy.`
   },
   {
     key: 'competitor-analysis',
@@ -98,7 +98,7 @@ Work through the Lean Canvas with the founder: Problem, Customer Segments, Uniqu
     description: 'Highest-leverage growth levers for your stage',
     system: `You are a growth expert who has driven growth at multiple startups from $0 to $10M ARR. You think in AARRR metrics (Acquisition, Activation, Retention, Revenue, Referral) and high-leverage experiments.
 
-Help the founder: audit their current growth metrics, identify the biggest bottleneck, brainstorm high-ROI growth experiments, prioritize by impact vs. effort, and build a 30-day growth sprint plan. Be specific — real tactics with real examples, not generic advice. Think scrappy and founder-led, not agency-driven.`
+Help the founder: audit their current growth metrics, identify the biggest bottleneck, brainstorm high-ROI growth experiments, prioritize by impact vs. effort, and build a 30-day growth sprint plan. Be specific - real tactics with real examples, not generic advice. Think scrappy and founder-led, not agency-driven.`
   },
   {
     key: 'cold-outreach',
@@ -349,16 +349,16 @@ function getPlaybookGreeting(pb) {
   const ctx = state.context;
   const hasCtx = ctx.name || ctx.problem;
   const ctxNote = hasCtx
-    ? `I can see you're building **${ctx.name || 'your startup'}**${ctx.stage ? ` at the ${ctx.stage} stage` : ''}. Great — let's use that context.`
+    ? `I can see you're building **${ctx.name || 'your startup'}**${ctx.stage ? ` at the ${ctx.stage} stage` : ''}. Great - let's use that context.`
     : `First, a quick tip: fill out your **Startup Context** (right panel) so I can give you tailored advice.`;
 
   const greetings = {
-    'pitch-deck': ` **Pitch Deck Builder activated!**\n\n${ctxNote}\n\nI'm going to help you build a VC-grade pitch deck slide by slide. Let's start with the foundation:\n\n**What problem does your startup solve, and for whom?** (Don't overthink it — just tell me like you're talking to a friend.)`,
-    'gtm-strategy': ` **GTM Strategy activated!**\n\n${ctxNote}\n\nLet's build your go-to-market strategy from the ground up.\n\n**Quick question to start:** Are you targeting B2B or B2C, and what stage are you at — pre-launch, just launched, or have some customers already?`,
+    'pitch-deck': ` **Pitch Deck Builder activated!**\n\n${ctxNote}\n\nI'm going to help you build a VC-grade pitch deck slide by slide. Let's start with the foundation:\n\n**What problem does your startup solve, and for whom?** (Don't overthink it - just tell me like you're talking to a friend.)`,
+    'gtm-strategy': ` **GTM Strategy activated!**\n\n${ctxNote}\n\nLet's build your go-to-market strategy from the ground up.\n\n**Quick question to start:** Are you targeting B2B or B2C, and what stage are you at - pre-launch, just launched, or have some customers already?`,
     'fundraising': ` **Fundraising Prep activated!**\n\nI'm your fundraising coach. I'll help you craft a compelling narrative, prep for tough questions, and think through your investor outreach.\n\n**Let's start here:** Are you raising now, or planning to raise in the next 1-6 months? And what round (pre-seed, seed, Series A)?`,
-    'icp-workshop': ` **ICP Workshop activated!**\n\nLet's nail your Ideal Customer Profile — this is the most important work you'll do for sales and marketing.\n\n${ctxNote}\n\n**First question:** Who are your current customers or who do you imagine buying this first? Tell me whatever you know — industry, company size, job title, anything.`,
+    'icp-workshop': ` **ICP Workshop activated!**\n\nLet's nail your Ideal Customer Profile - this is the most important work you'll do for sales and marketing.\n\n${ctxNote}\n\n**First question:** Who are your current customers or who do you imagine buying this first? Tell me whatever you know - industry, company size, job title, anything.`,
     'one-pager': ` **One-Pager Generator activated!**\n\nLet's create a crisp, compelling executive summary that gets replies from investors and partners.\n\n**To start: what's your startup's one-liner?** (The single sentence that explains what you do and for whom.)`,
-    'competitor-analysis': ` **Competitor Analysis activated!**\n\n${ctxNote}\n\nLet's map your competitive landscape and find your positioning.\n\n**Who do you see as your main competitors?** List 2-5 names — they can be direct competitors, alternatives, or even "status quo" (how people solve this today without you).`,
+    'competitor-analysis': ` **Competitor Analysis activated!**\n\n${ctxNote}\n\nLet's map your competitive landscape and find your positioning.\n\n**Who do you see as your main competitors?** List 2-5 names - they can be direct competitors, alternatives, or even "status quo" (how people solve this today without you).`,
     'business-model-canvas': `🗃 **Business Model Canvas activated!**\n\nLet's work through the Lean Canvas together. This will sharpen your business model and reveal any hidden risks.\n\n${ctxNote}\n\n**Start here:** Describe your target customer in one sentence, and the #1 problem you're solving for them.`,
     'growth-hacking': ` **Growth Hacking activated!**\n\n${ctxNote}\n\nLet's find your highest-leverage growth moves.\n\n**Quick growth audit:** What's your current monthly active users / MRR, your main acquisition channel right now, and where do you feel most stuck in growth?`,
     'cold-outreach': `📧 **Cold Outreach activated!**\n\nLet's write a cold sequence that actually gets replies.\n\n${ctxNote}\n\n**To start:** Who exactly are you reaching out to (job title/industry) and what is the specific pain point you want to highlight in the first email?`,
@@ -601,7 +601,7 @@ async function callGemini(systemInstruction, messages) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${state.apiKey}`;
 
   // Convert messages to Gemini format
-  // Don't include the last message (it's the user's latest) — we build the history
+  // Don't include the last message (it's the user's latest) - we build the history
   const contents = messages.map(msg => ({
     role: msg.role,
     parts: msg.parts
@@ -762,7 +762,7 @@ function autoSave() {
 exportBtn?.addEventListener('click', () => {
   if (state.messages.length === 0) { showToast('No messages to export.'); return; }
   const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
-  let md = `# ForgeAI Export — ${pb.name}\n`;
+  let md = `# ForgeAI Export - ${pb.name}\n`;
   md += `_Exported on ${new Date().toLocaleDateString()}_\n\n---\n\n`;
 
   state.messages.forEach(msg => {
