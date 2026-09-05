@@ -103,6 +103,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
+  width: 100%;
 }
 .hero-content { display: flex; flex-direction: column; gap: 24px; }
 .hero-badge .badge-dot {
