@@ -56,9 +56,7 @@
   to   { opacity:1; transform: translateY(0) scale(1); }
 }
 .modal-icon {
-  font-size: 2.5rem;
-  text-align: center;
-  filter: drop-shadow(0 0 16px rgba(124,58,237,0.8));
+  font-size: 1.8rem;
 }
 .modal-box h2 { font-size: 1.5rem; text-align: center; letter-spacing: -0.02em; }
 .modal-box p  { text-align: center; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
@@ -118,7 +116,7 @@
   cursor: pointer;
   flex-shrink: 0;
 }
-.new-chat-btn:hover { background: rgba(124,58,237,0.2); }
+.new-chat-btn:hover { background: var(--bg-card-hover); border-color: var(--text-primary); }
 .sidebar-section { padding: 8px 12px 4px; overflow-y: auto; }
 .sidebar-section-label {
   font-size: 0.65rem;
