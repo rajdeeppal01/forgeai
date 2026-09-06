@@ -113,11 +113,28 @@ Help the founder craft cold outreach sequences. Focus on: grabbing attention in 
 
 // ── DOM Elements ──────────────────────────────
 const $ = id => document.getElementById(id);
+
+// Auth UI
+const authModal       = $('authModal');
+const tabLogin        = $('tabLogin');
+const tabRegister     = $('tabRegister');
+const authEmail       = $('authEmail');
+const authPassword    = $('authPassword');
+const authError       = $('authError');
+const authSubmitBtn   = $('authSubmitBtn');
+const authModalTitle  = $('authModalTitle');
+const authModalDesc   = $('authModalDesc');
+const logoutBtn       = $('logoutBtn');
+
+// API Key UI
 const apiKeyModal     = $('apiKeyModal');
 const apiKeyInput     = $('apiKeyInput');
 const apiKeyError     = $('apiKeyError');
 const saveApiKeyBtn   = $('saveApiKey');
 const toggleKeyVis    = $('toggleKeyVisibility');
+const changeKeyBtn    = $('changeKeyBtn');
+
+// App UI
 const appShell        = $('appShell');
 const chatMessages    = $('chatMessages');
 const welcomeScreen   = $('welcomeScreen');
@@ -172,9 +189,12 @@ function showToast(msg, duration = 2800) {
   setTimeout(() => toast.classList.remove('show'), duration);
 }
 
-// ── Init ──────────────────────────────────────
+// ── Auth & Init ───────────────────────────────
+let isRegisterMode = false;
+let currentUser = null;
+
 function init() {
-  // Load saved state
+  // Load local state first
   state.apiKey     = LS.get('apiKey', '');
   state.model      = LS.get('model', 'gemini-3.5-flash');
   state.projects   = LS.get('projects', []);
@@ -182,53 +202,137 @@ function init() {
   state.messageCount = LS.get('msgCount', 0);
   state.activeProjectId = LS.get('activeProject', null);
 
-  // Check URL params for playbook pre-selection or upgrades
   const urlParams = new URLSearchParams(window.location.search);
-  const pbParam = urlParams.get('playbook');
-  const upgradeParam = urlParams.get('upgrade');
-
-  if (upgradeParam === 'success') {
-    LS.set('isPro', true);
-    // Remove the param from URL without reloading
-    window.history.replaceState({}, document.title, window.location.pathname);
-    setTimeout(() => showToast('🎉 Upgrade successful! Welcome to Founder Pro.'), 1000);
+  if (urlParams.get('auth') === 'register') {
+    switchAuthMode(true);
   }
 
+  // Check Auth State
+  try {
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        authModal.classList.add('hidden');
+        syncFromFirestore(user.uid);
+      } else {
+        currentUser = null;
+        authModal.classList.remove('hidden');
+        appShell.style.display = 'none';
+        apiKeyModal.classList.add('hidden');
+      }
+    });
+  } catch(e) {
+    console.error("Firebase not configured", e);
+  }
+}
+
+async function syncFromFirestore(uid) {
+  try {
+    const docRef = db.collection('users').doc(uid);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data.context) state.context = data.context;
+      if (data.projects) state.projects = data.projects;
+    }
+  } catch(e) {
+    console.warn("Firestore sync failed:", e);
+  }
+
+  checkApiKey();
+}
+
+function checkApiKey() {
   if (!state.apiKey) {
     apiKeyModal.classList.remove('hidden');
     appShell.style.display = 'none';
   } else {
     apiKeyModal.classList.add('hidden');
     appShell.style.display = 'grid';
+    const pbParam = new URLSearchParams(window.location.search).get('playbook');
     loadApp(pbParam);
   }
 }
 
+async function syncToFirestore() {
+  if (!currentUser) return;
+  try {
+    await db.collection('users').doc(currentUser.uid).set({
+      context: state.context,
+      projects: state.projects,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  } catch(e) {
+    console.warn("Error saving to Firestore", e);
+  }
+}
+
 function loadApp(preselectedPlaybook = null) {
-  // Restore UI state
   if (modelSelect) modelSelect.value = state.model;
-
-  // Load context form
   loadContextForm();
-
-  // Render sidebar
   renderPlaybookList();
   renderProjectList();
   renderWelcomePlaybooks();
 
-  // Set active playbook
   if (preselectedPlaybook) {
     activatePlaybook(preselectedPlaybook);
   } else if (state.activeProjectId) {
     const proj = state.projects.find(p => p.id === state.activeProjectId);
-    if (proj) {
-      loadProjectMessages(proj);
-    }
+    if (proj) loadProjectMessages(proj);
   }
-
-  // Responsive sidebar
   checkResponsive();
 }
+
+// ── Auth UI Handlers ──────────────────────────
+function switchAuthMode(toRegister) {
+  isRegisterMode = toRegister;
+  authError.textContent = '';
+  if (toRegister) {
+    tabRegister.classList.add('active');
+    tabLogin.classList.remove('active');
+    authModalTitle.textContent = 'Create an Account';
+    authSubmitBtn.textContent = 'Register →';
+  } else {
+    tabLogin.classList.add('active');
+    tabRegister.classList.remove('active');
+    authModalTitle.textContent = 'Sign In to ForgeAI';
+    authSubmitBtn.textContent = 'Log In →';
+  }
+}
+
+tabLogin?.addEventListener('click', () => switchAuthMode(false));
+tabRegister?.addEventListener('click', () => switchAuthMode(true));
+
+authSubmitBtn?.addEventListener('click', async () => {
+  const email = authEmail.value.trim();
+  const pass = authPassword.value;
+  if (!email || !pass) return (authError.textContent = 'Please enter email and password.');
+  
+  authSubmitBtn.disabled = true;
+  authSubmitBtn.textContent = 'Loading...';
+  authError.textContent = '';
+
+  try {
+    if (isRegisterMode) {
+      await auth.createUserWithEmailAndPassword(email, pass);
+    } else {
+      await auth.signInWithEmailAndPassword(email, pass);
+    }
+  } catch (err) {
+    authError.textContent = err.message;
+  } finally {
+    authSubmitBtn.disabled = false;
+    authSubmitBtn.textContent = isRegisterMode ? 'Register →' : 'Log In →';
+  }
+});
+
+logoutBtn?.addEventListener('click', async () => {
+  try {
+    await auth.signOut();
+  } catch (e) {
+    console.error(e);
+  }
+});
 
 // ── API Key Modal ─────────────────────────────
 saveApiKeyBtn?.addEventListener('click', async () => {
@@ -422,6 +526,7 @@ addProjectBtn?.addEventListener('click', () => {
   };
   state.projects.push(proj);
   LS.set('projects', state.projects);
+  syncToFirestore();
   state.activeProjectId = proj.id;
   LS.set('activeProject', proj.id);
   renderProjectList();
@@ -487,6 +592,7 @@ saveContextBtn?.addEventListener('click', () => {
     goal:    ctxGoal?.value.trim()    || '',
   };
   LS.set('context', state.context);
+  syncToFirestore();
   ctxSavedMsg.classList.add('show');
   setTimeout(() => ctxSavedMsg.classList.remove('show'), 2500);
   showToast('✓ Startup context saved!');
@@ -755,6 +861,7 @@ function autoSave() {
     state.projects[idx].messages = state.messages;
     state.projects[idx].playbook = state.activePlaybook;
     LS.set('projects', state.projects);
+    syncToFirestore();
   }
 }
 

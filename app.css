@@ -610,3 +610,19 @@
   }
   .welcome-playbooks { grid-template-columns: repeat(2,1fr); }
 }
+
+/* ── Auth Tabs ──────────────────────────────── */
+.auth-tabs .btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.auth-tabs .btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+.auth-tabs .btn.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
