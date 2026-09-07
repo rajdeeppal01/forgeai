@@ -163,6 +163,7 @@ const settingsKeyInput= $('settingsKeyInput');
 const updateKeyBtn    = $('updateKeyBtn');
 const modelSelect     = $('modelSelect');
 const clearAllDataBtn = $('clearAllDataBtn');
+const themeToggleBtn  = $('themeToggleBtn');
 const toast           = $('toast');
 // Context Panel
 const ctxName    = $('ctxName');
@@ -193,6 +194,11 @@ let isRegisterMode = false;
 let currentUser = null;
 
 function init() {
+  // Load Theme
+  if (LS.get('theme') === 'dark') {
+    document.body.classList.add('dark-theme');
+  }
+
   // Load local state first
   state.apiKey     = LS.get('apiKey', '');
   state.model      = LS.get('model', 'gemini-3.5-flash');
@@ -939,7 +945,13 @@ clearChatBtn?.addEventListener('click', () => {
   showToast('Chat cleared');
 });
 
-// ── Sidebar Toggle ────────────────────────────
+// ── Sidebar & Navigation ──────────────────────
+themeToggleBtn?.addEventListener('click', () => {
+  document.body.classList.toggle('dark-theme');
+  const isDark = document.body.classList.contains('dark-theme');
+  LS.set('theme', isDark ? 'dark' : 'light');
+});
+
 sidebarToggle?.addEventListener('click', () => {
   const isMobile = window.innerWidth <= 900;
   if (isMobile) {
