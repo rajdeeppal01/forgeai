@@ -55,39 +55,7 @@
   from { opacity:0; transform: translateY(20px) scale(0.96); }
   to   { opacity:1; transform: translateY(0) scale(1); }
 }
-.manual-step {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.manual-step:last-of-type {
-  margin-bottom: 0;
-}
-.manual-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
-.modal-box .manual-text h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-  text-align: left;
-}
-.modal-box .manual-text p {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  text-align: left;
-}
+
 .modal-icon {
   font-size: 1.8rem;
 }
@@ -659,3 +627,14 @@
   border-color: var(--accent);
   color: var(--accent-text);
 }
+
+/* ── Driver.js Custom Theme ────────────────── */
+.driver-popover { background-color: var(--bg-secondary) !important; color: var(--text-primary) !important; border: 1px solid var(--border) !important; border-radius: var(--radius-xl) !important; padding: 20px !important; }
+.driver-popover-title { color: var(--text-primary) !important; font-size: 1.1rem !important; font-weight: 600 !important; margin-bottom: 8px !important; }
+.driver-popover-description { color: var(--text-secondary) !important; font-size: 0.9rem !important; line-height: 1.5 !important; }
+.driver-popover-close-btn { color: var(--text-secondary) !important; }
+.driver-popover-footer button { background-color: var(--bg-tertiary) !important; color: var(--text-primary) !important; border-radius: var(--radius-sm) !important; text-shadow: none !important; border: 1px solid var(--border) !important; padding: 6px 12px !important; }
+.driver-popover-footer button:hover { background-color: var(--bg-card-hover) !important; }
+.driver-popover-footer .driver-popover-next-btn { background-color: var(--accent) !important; color: var(--accent-text) !important; border: none !important; }
+.driver-popover-footer .driver-popover-next-btn:hover { opacity: 0.9 !important; }
+.driver-popover-arrow { display: none !important; }
