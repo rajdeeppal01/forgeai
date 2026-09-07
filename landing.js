@@ -21,6 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
     a.addEventListener('click', () => navMobile.classList.remove('open'));
   });
 
+  // ── Theme Toggle ────────────────────────────
+  const themeToggleBtn = document.querySelector('.theme-toggle-btn');
+  themeToggleBtn?.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark-theme');
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    localStorage.setItem('forgeai_theme', JSON.stringify(isDark ? 'dark' : 'light'));
+  });
+
   // Animations removed per de-vibing rules
 
   // ── FAQ Accordion ─────────────────────────

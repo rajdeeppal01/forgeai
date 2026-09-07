@@ -163,7 +163,8 @@ const settingsKeyInput= $('settingsKeyInput');
 const updateKeyBtn    = $('updateKeyBtn');
 const modelSelect     = $('modelSelect');
 const clearAllDataBtn = $('clearAllDataBtn');
-const themeToggleBtn  = $('themeToggleBtn');
+const themeToggleBtn  = document.querySelector('.theme-toggle-btn');
+const globalLoader    = $('globalLoader');
 const toast           = $('toast');
 // Context Panel
 const ctxName    = $('ctxName');
@@ -215,6 +216,7 @@ function init() {
   // Check Auth State
   try {
     auth.onAuthStateChanged(user => {
+      globalLoader.classList.add('hidden');
       if (user) {
         currentUser = user;
         authModal.classList.add('hidden');

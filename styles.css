@@ -13,6 +13,7 @@
   --bg-input:      #F3F4F6;
 
   --accent:        #111827;
+  --accent-text:   #FFFFFF;
   --accent-light:  #374151;
   --accent-dim:    #E5E7EB;
   --accent-glow:   rgba(0,0,0,0.05);
@@ -50,7 +51,7 @@
   --context-width: 280px;
 }
 
-body.dark-theme {
+:root.dark-theme, body.dark-theme {
   --bg-primary:    #0A0A0A;
   --bg-secondary:  #141414;
   --bg-card:       #1A1A1A;
@@ -58,6 +59,7 @@ body.dark-theme {
   --bg-input:      #1A1A1A;
 
   --accent:        #F9FAFB;
+  --accent-text:   #0A0A0A;
   --accent-light:  #D1D5DB;
   --accent-dim:    #374151;
   --accent-glow:   rgba(255,255,255,0.08);
@@ -140,8 +142,8 @@ h1,h2,h3,h4,h5,h6 { line-height: 1.2; font-weight: 700; }
   white-space: nowrap;
 }
 .btn-primary {
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  background: var(--accent);
+  color: var(--accent-text);
   box-shadow: var(--shadow-glow-sm);
 }
 .btn-primary:hover {
