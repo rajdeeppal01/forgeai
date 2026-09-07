@@ -76,13 +76,13 @@
   font-size: 0.9rem;
   flex-shrink: 0;
 }
-.manual-text h4 {
+.modal-box .manual-text h4 {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 4px;
   text-align: left;
 }
-.manual-text p {
+.modal-box .manual-text p {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.5;
