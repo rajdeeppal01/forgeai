@@ -402,7 +402,7 @@ function renderPlaybookList() {
     const el = document.createElement('div');
     el.className = `sidebar-item ${state.activePlaybook === pb.key ? 'active' : ''}`;
     el.dataset.key = pb.key;
-    el.innerHTML = `<span class="sidebar-item-icon">${pb.icon}</span><span class="sidebar-item-label">${pb.name}</span>`;
+    el.innerHTML = `<span class="sidebar-item-label">${pb.name}</span>`;
     el.addEventListener('click', () => activatePlaybook(pb.key));
     playbookList.appendChild(el);
   });
