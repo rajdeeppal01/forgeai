@@ -163,7 +163,6 @@ const settingsKeyInput= $('settingsKeyInput');
 const updateKeyBtn    = $('updateKeyBtn');
 const modelSelect     = $('modelSelect');
 const clearAllDataBtn = $('clearAllDataBtn');
-const changeKeyBtn    = $('changeKeyBtn');
 const toast           = $('toast');
 // Context Panel
 const ctxName    = $('ctxName');
