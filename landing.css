@@ -17,6 +17,9 @@
   border-bottom: 1px solid var(--border);
   padding: 12px 0;
 }
+.dark-theme .navbar.scrolled {
+  background: rgba(10,10,10,0.9);
+}
 .nav-logo {
   display: flex;
   align-items: center;

@@ -25,8 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggleBtn = document.querySelector('.theme-toggle-btn');
   themeToggleBtn?.addEventListener('click', () => {
     document.documentElement.classList.toggle('dark-theme');
-    document.body.classList.toggle('dark-theme');
-    const isDark = document.body.classList.contains('dark-theme');
+    const isDark = document.documentElement.classList.contains('dark-theme');
     localStorage.setItem('forgeai_theme', JSON.stringify(isDark ? 'dark' : 'light'));
   });
 

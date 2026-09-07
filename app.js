@@ -197,7 +197,7 @@ let currentUser = null;
 function init() {
   // Load Theme
   if (LS.get('theme') === 'dark') {
-    document.body.classList.add('dark-theme');
+    document.documentElement.classList.add('dark-theme');
   }
 
   // Load local state first
@@ -949,8 +949,8 @@ clearChatBtn?.addEventListener('click', () => {
 
 // ── Sidebar & Navigation ──────────────────────
 themeToggleBtn?.addEventListener('click', () => {
-  document.body.classList.toggle('dark-theme');
-  const isDark = document.body.classList.contains('dark-theme');
+  document.documentElement.classList.toggle('dark-theme');
+  const isDark = document.documentElement.classList.contains('dark-theme');
   LS.set('theme', isDark ? 'dark' : 'light');
 });
 
