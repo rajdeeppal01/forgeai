@@ -95,6 +95,43 @@
       </button>
       <p class="modal-note">Stored locally in your browser. Never sent to our servers.</p>
     </div>
+    </div>
+  </div>
+
+  <!-- ── Manual / Onboarding Modal ──────────────────────── -->
+  <div class="modal-overlay hidden" id="manualModal">
+    <div class="modal-box" style="max-width: 480px; padding: 40px; border-top: 4px solid var(--accent);">
+      <h2 style="font-size: 1.5rem; margin-bottom: 12px; letter-spacing: -0.02em;">Welcome to ForgeAI</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">Here is a quick guide to help you build your startup materials.</p>
+      
+      <div class="manual-step">
+        <div class="manual-icon">1</div>
+        <div class="manual-text">
+          <h4>Set Up Your Brain</h4>
+          <p>Click "Settings" in the bottom left to connect your free Google Gemini API key. ForgeAI runs on Gemini 1.5 Pro to give you world-class startup advice.</p>
+        </div>
+      </div>
+      
+      <div class="manual-step">
+        <div class="manual-icon">2</div>
+        <div class="manual-text">
+          <h4>Pick a Playbook</h4>
+          <p>Click any playbook (e.g. "Pitch Deck Builder") to load a purpose-built AI template with the right context and structure. Or just use General Chat.</p>
+        </div>
+      </div>
+      
+      <div class="manual-step">
+        <div class="manual-icon">3</div>
+        <div class="manual-text">
+          <h4>Build & Export</h4>
+          <p>Talk to the AI to draft your content. Once you're happy, use the buttons in the top right corner to export your work as PDF or Markdown.</p>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="closeManualBtn" style="width:100%; justify-content:center; margin-top:16px;">
+        Got it, let's build →
+      </button>
+    </div>
   </div>
 
   <!-- ── App Shell ──────────────────────────── -->
@@ -140,6 +177,10 @@
       </div>
 
       <div class="sidebar-footer">
+        <button class="sidebar-foot-btn" id="helpBtn">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Help & Manual
+        </button>
         <button class="sidebar-foot-btn" id="settingsBtn">
           <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Settings

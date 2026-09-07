@@ -160,6 +160,9 @@ const settingsBtn     = $('settingsBtn');
 const settingsOverlay = $('settingsOverlay');
 const settingsClose   = $('settingsClose');
 const settingsKeyInput= $('settingsKeyInput');
+const helpBtn         = $('helpBtn');
+const manualModal     = $('manualModal');
+const closeManualBtn  = $('closeManualBtn');
 const updateKeyBtn    = $('updateKeyBtn');
 const modelSelect     = $('modelSelect');
 const clearAllDataBtn = $('clearAllDataBtn');
@@ -221,6 +224,12 @@ function init() {
         currentUser = user;
         authModal.classList.add('hidden');
         syncFromFirestore(user.uid);
+        
+        // Show manual on first login
+        if (!LS.get('seen_manual')) {
+          manualModal.classList.remove('hidden');
+          LS.set('seen_manual', true);
+        }
       } else {
         currentUser = null;
         authModal.classList.remove('hidden');
@@ -999,6 +1008,14 @@ settingsBtn?.addEventListener('click', () => {
 });
 settingsClose?.addEventListener('click', () => settingsOverlay.classList.remove('open'));
 settingsOverlay?.addEventListener('click', e => { if (e.target === settingsOverlay) settingsOverlay.classList.remove('open'); });
+
+// ── Manual Modal ──────────────────────────────
+helpBtn?.addEventListener('click', () => {
+  manualModal.classList.remove('hidden');
+  LS.set('seen_manual', true);
+});
+closeManualBtn?.addEventListener('click', () => manualModal.classList.add('hidden'));
+manualModal?.addEventListener('click', e => { if (e.target === manualModal) manualModal.classList.add('hidden'); });
 
 updateKeyBtn?.addEventListener('click', () => {
   const key = settingsKeyInput.value.trim();
