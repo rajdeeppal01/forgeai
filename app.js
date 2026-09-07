@@ -423,7 +423,6 @@ function renderWelcomePlaybooks() {
     const el = document.createElement('div');
     el.className = 'welcome-pb-card';
     el.innerHTML = `
-      <div class="pb-em">${pb.icon}</div>
       <div class="pb-title">${pb.name}</div>
       <div class="pb-desc">${pb.description}</div>
     `;
