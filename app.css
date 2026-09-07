@@ -80,11 +80,13 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 4px;
+  text-align: left;
 }
 .manual-text p {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.5;
+  text-align: left;
 }
 .modal-icon {
   font-size: 1.8rem;
