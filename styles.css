@@ -231,6 +231,11 @@ h1,h2,h3,h4,h5,h6 { line-height: 1.2; font-weight: 700; }
 }
 [data-tooltip]:hover::after { opacity: 1; }
 
+.top-bar [data-tooltip]::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+
 /* ── Loading Dots ────────────────────────────── */
 .typing-dots {
   display: flex;
