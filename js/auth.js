@@ -22,8 +22,9 @@ function switchAuthMode(toRegister) {
 if (tabLogin) tabLogin.addEventListener('click', () => switchAuthMode(false));
 if (tabRegister) tabRegister.addEventListener('click', () => switchAuthMode(true));
 
-if (authSubmitBtn) {
-  authSubmitBtn.addEventListener('click', async () => {
+if (authForm) {
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
     const email = authEmail.value.trim();
     const pass = authPassword.value;
     if (!email || !pass) return (authError.textContent = 'Please enter email and password.');

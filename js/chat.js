@@ -218,7 +218,11 @@ saveContextBtn?.addEventListener('click', () => {
     goal:    ctxGoal?.value.trim()    || '',
   };
   LS.set('context', state.context);
-  syncToFirestore();
+  if (typeof syncContextToFirestore === 'function') {
+    syncContextToFirestore();
+  } else {
+    syncToFirestore(); // fallback if not updated
+  }
   ctxSavedMsg.classList.add('show');
   setTimeout(() => ctxSavedMsg.classList.remove('show'), 2500);
   showToast('✓ Startup context saved!');
@@ -283,7 +287,14 @@ async function sendMessage() {
   }
 
   // Add user message
-  const userText = text;
+  let userText = text;
+  
+  if (state.attachedDocumentText) {
+    userText += `\n\n[ATTACHED DOCUMENT: ${state.attachedDocumentName}]\n${state.attachedDocumentText}\n[/ATTACHED DOCUMENT]\n`;
+    state.attachedDocumentText = '';
+    state.attachedDocumentName = '';
+  }
+
   chatInput.value = '';
   chatInput.style.height = 'auto';
   charCount.textContent = '0 / 8000';
@@ -309,7 +320,8 @@ async function sendMessage() {
 
   const userMsg = { role: 'user', parts: [{ text: userText }] };
   state.messages.push(userMsg);
-  appendMessage('user', userText, timeStr);
+  // Only display the original typed text to avoid UI bloat
+  appendMessage('user', text, timeStr);
   scrollToBottom();
   
   // Auto-save immediately
@@ -327,7 +339,9 @@ async function sendMessage() {
             state.projects[idx].name = title.trim().replace(/^["']|["']$/g, '');
             LS.set('projects', state.projects);
             renderProjectList();
-            syncToFirestore();
+            if (typeof syncProjectToFirestore === 'function') {
+              syncProjectToFirestore(state.projects[idx]);
+            }
           }
         }
       } catch (err) { console.error("Title generation failed", err); }
@@ -527,7 +541,9 @@ function autoSave() {
     state.projects[idx].messages = state.messages;
     state.projects[idx].playbook = state.activePlaybook;
     LS.set('projects', state.projects);
-    syncToFirestore();
+    if (typeof syncProjectToFirestore === 'function') {
+      syncProjectToFirestore(state.projects[idx]);
+    }
   }
 }
 
@@ -636,9 +652,9 @@ if (typeof fileUpload !== 'undefined' && fileUpload) {
         text = await file.text();
       }
       
-      const curr = chatInput.value;
-      chatInput.value = curr + `\n\n[ATTACHED DOCUMENT: ${file.name}]\n${text}\n[/ATTACHED DOCUMENT]\n`;
-      showToast(`✓ ${file.name} attached!`);
+      state.attachedDocumentText = text;
+      state.attachedDocumentName = file.name;
+      showToast(`✓ ${file.name} attached! (Will be sent with next message)`);
       chatInput.focus();
     } catch(err) {
       console.error(err);

@@ -15,6 +15,8 @@ const state = {
   sidebarOpen: true,
   contextPanelOpen: true,
   messageCount: 0,      // for daily limit
+  attachedDocumentText: '',
+  attachedDocumentName: '',
 };
 
 // ── Playbooks Definition ───────────────────────

@@ -6,6 +6,7 @@ const tabLogin        = $('tabLogin');
 const tabRegister     = $('tabRegister');
 const authEmail       = $('authEmail');
 const authPassword    = $('authPassword');
+const authForm        = $('authForm');
 const authError       = $('authError');
 const authSubmitBtn   = $('authSubmitBtn');
 const authModalTitle  = $('authModalTitle');

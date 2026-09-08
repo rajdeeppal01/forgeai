@@ -18,17 +18,34 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 // ── Sync Helpers ─────────────────────────────────
-async function syncToFirestore() {
+async function syncContextToFirestore() {
   if (!window.currentUser) return;
   try {
     await db.collection('users').doc(window.currentUser.uid).set({
       context: state.context,
-      projects: state.projects,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   } catch(e) {
-    console.warn("Error saving to Firestore", e);
+    console.warn("Error saving context to Firestore", e);
   }
+}
+
+async function syncProjectToFirestore(project) {
+  if (!window.currentUser || !project || !project.id) return;
+  try {
+    await db.collection('users').doc(window.currentUser.uid)
+      .collection('projects').doc(project.id).set({
+        ...project,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+  } catch(e) {
+    console.warn("Error saving project to Firestore", e);
+  }
+}
+
+// Deprecated function to avoid breaking old code calls that haven't been updated yet
+async function syncToFirestore() {
+  await syncContextToFirestore();
 }
 
 async function syncFromFirestore(uid) {
@@ -38,8 +55,22 @@ async function syncFromFirestore(uid) {
     if (doc.exists) {
       const data = doc.data();
       if (data.context) state.context = data.context;
-      if (data.projects) state.projects = data.projects;
+      
+      // We no longer read state.projects from the main doc.
+      // We will now read from the subcollection.
     }
+    
+    // Fetch projects from subcollection
+    const projectsSnapshot = await docRef.collection('projects').orderBy('updatedAt', 'desc').get();
+    const projectsList = [];
+    projectsSnapshot.forEach(projDoc => {
+      projectsList.push(projDoc.data());
+    });
+    
+    if (projectsList.length > 0) {
+      state.projects = projectsList;
+    }
+
   } catch(e) {
     console.warn("Firestore sync failed:", e);
   }
