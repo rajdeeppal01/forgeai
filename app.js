@@ -145,7 +145,7 @@ const playbookList    = $('playbookList');
 const projectList     = $('projectList');
 const welcomePlaybooks= $('welcomePlaybooks');
 const newChatBtn      = $('newChatBtn');
-const addProjectBtn   = $('addProjectBtn');
+
 const sidebarToggle   = $('sidebarToggle');
 const sidebarClose    = $('sidebarClose');
 const contextPanelTgl = $('contextPanelToggle');
@@ -527,24 +527,6 @@ function renderProjectList() {
   });
 }
 
-addProjectBtn?.addEventListener('click', () => {
-  const name = prompt('Project name:');
-  if (!name?.trim()) return;
-  const proj = {
-    id: Date.now().toString(),
-    name: name.trim(),
-    messages: [],
-    playbook: state.activePlaybook || 'general',
-    createdAt: new Date().toISOString()
-  };
-  state.projects.push(proj);
-  LS.set('projects', state.projects);
-  syncToFirestore();
-  state.activeProjectId = proj.id;
-  LS.set('activeProject', proj.id);
-  renderProjectList();
-  showToast(`✓ Project "${proj.name}" created`);
-});
 
 function loadProjectMessages(proj) {
   state.messages = proj.messages || [];
@@ -676,10 +658,50 @@ async function sendMessage() {
   charCount.textContent = '0 / 8000';
   const timeStr = formatTime();
 
+  // Auto-create chat session if none exists
+  let isNewChat = false;
+  if (!state.activeProjectId) {
+    isNewChat = true;
+    const proj = {
+      id: Date.now().toString(),
+      name: userText.substring(0, 25) + (userText.length > 25 ? '...' : ''),
+      messages: [],
+      playbook: state.activePlaybook || 'general',
+      createdAt: new Date().toISOString()
+    };
+    state.projects.unshift(proj); // Add to top
+    state.activeProjectId = proj.id;
+    LS.set('activeProject', proj.id);
+    LS.set('projects', state.projects);
+    renderProjectList();
+  }
+
   const userMsg = { role: 'user', parts: [{ text: userText }] };
   state.messages.push(userMsg);
   appendMessage('user', userText, timeStr);
   scrollToBottom();
+  
+  // Auto-save immediately
+  autoSave();
+
+  if (isNewChat) {
+    // Generate a better name in the background
+    setTimeout(async () => {
+      try {
+        const titlePrompt = `Summarize this user prompt in 2 to 4 words max to use as a chat title. Output ONLY the title, no quotes or intro text: "${userText}"`;
+        const title = await callGemini(titlePrompt, []);
+        if (title && title.trim()) {
+          const idx = state.projects.findIndex(p => p.id === state.activeProjectId);
+          if (idx !== -1) {
+            state.projects[idx].name = title.trim().replace(/^["']|["']$/g, '');
+            LS.set('projects', state.projects);
+            renderProjectList();
+            syncToFirestore();
+          }
+        }
+      } catch (err) { console.error("Title generation failed", err); }
+    }, 500); // Wait a bit so the main chat UI updates first
+  }
 
   // Build system prompt
   const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
