@@ -442,6 +442,12 @@ function activatePlaybook(key) {
   const pb = PLAYBOOKS.find(p => p.key === key) || PLAYBOOKS[0];
   state.activePlaybook = pb.key;
   state.messages = [];
+  state.activeProjectId = null;
+  LS.set('activeProject', null);
+  
+  if (window.greetingTimeoutId) {
+    clearTimeout(window.greetingTimeoutId);
+  }
 
   // Update UI
   activePlaybookName.textContent = pb.name;
@@ -456,7 +462,8 @@ function activatePlaybook(key) {
   if (pb.key !== 'general') {
     const greeting = getPlaybookGreeting(pb);
     state.messages = [];
-    setTimeout(() => startPlaybookGreeting(pb, greeting), 100);
+    if (window.startGreetingTimeoutId) clearTimeout(window.startGreetingTimeoutId);
+    window.startGreetingTimeoutId = setTimeout(() => startPlaybookGreeting(pb, greeting), 100);
   }
 
   closeMobileSidebar();
@@ -488,7 +495,7 @@ function startPlaybookGreeting(pb, greeting) {
   chatMessages.style.display = 'flex';
   showTypingIndicator();
 
-  setTimeout(() => {
+  window.greetingTimeoutId = setTimeout(() => {
     removeTypingIndicator();
     const aiMsg = { role: 'model', parts: [{ text: greeting }] };
     state.messages.push(aiMsg);
