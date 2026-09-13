@@ -852,7 +852,10 @@ Return ONLY valid JSON matching this exact schema:
       body: JSON.stringify(body)
     });
     
-    if (!res.ok) throw new Error("Failed to generate dashboard");
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error("API Error: " + (errData?.error?.message || `HTTP ${res.status}`));
+    }
     const data = await res.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     
@@ -883,35 +886,50 @@ Return ONLY valid JSON matching this exact schema:
     dashboardActions.style.display = 'block';
     
     // Save state internally as first message
-    window.currentProjectId = 'proj_' + Date.now();
-    window.currentPlaybook = 'company-builder';
-    db.projects.add({
-      id: window.currentProjectId,
-      playbookId: window.currentPlaybook,
-      title: insights.startupName,
-      updatedAt: new Date().toISOString()
-    });
+    const projId = Date.now().toString();
+    const initMsg = `I've generated a business strategy dashboard for **${insights.startupName}** based on your idea: *"${idea}"*.\n\nWhat area would you like to drill into next? We can expand the GTM strategy, build a Pitch Deck, or refine the Business Model.`;
     
-    // Prepare chat history behind the scenes
-    const initMsg = {
-      role: 'ai',
-      text: `I've generated a business strategy dashboard for **${insights.startupName}** based on your idea: *"${idea}"*.\n\nWhat area would you like to drill into next? We can expand the GTM strategy, build a Pitch Deck, or refine the Business Model.`,
-      time: new Date().toISOString()
+    const proj = {
+      id: projId,
+      name: insights.startupName,
+      messages: [
+        { role: 'user', parts: [{ text: idea }] },
+        { role: 'model', parts: [{ text: initMsg }] }
+      ],
+      playbook: 'company-builder',
+      createdAt: new Date().toISOString()
     };
-    db.messages.add({ projectId: window.currentProjectId, ...initMsg });
+    
+    state.projects.unshift(proj);
+    LS.set('projects', state.projects);
+    if (typeof renderProjectList === 'function') renderProjectList();
+    if (typeof syncProjectToFirestore === 'function') syncProjectToFirestore(proj);
     
     document.getElementById('dashContinueBtn').onclick = () => {
-      // Hide dashboard, show chat
       dashboardScreen.style.display = 'none';
-      if(chatInputArea) chatInputArea.style.display = '';
-      document.getElementById('chatMessages').style.display = 'flex';
+      if (chatInputArea) chatInputArea.style.display = '';
       
-      // Load the chat we just saved
-      loadProject(window.currentProjectId);
+      // Set active project and render
+      state.activeProjectId = projId;
+      state.activePlaybook = 'company-builder';
+      state.messages = proj.messages;
+      LS.set('activeProject', projId);
+      
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      const chatMessages = document.getElementById('chatMessages');
+      if (welcomeScreen) welcomeScreen.style.display = 'none';
+      if (chatMessages) {
+        chatMessages.style.display = 'flex';
+        chatMessages.innerHTML = '';
+        state.messages.forEach(m => {
+          appendMessage(m.role, m.parts[0].text, formatTime(), false);
+        });
+        scrollToBottom();
+      }
     };
 
   } catch (err) {
     console.error(err);
-    document.getElementById('dashboardLoadingText').textContent = "Error generating dashboard. Please refresh and try again.";
+    document.getElementById('dashboardLoadingText').innerHTML = "Error: " + err.message + "<br><br><button onclick='location.reload()' style='padding: 8px 16px; background: var(--bg-card); color: white; border: 1px solid var(--border); border-radius: 4px;'>Refresh</button>";
   }
 };
