@@ -384,6 +384,32 @@ async function sendMessage() {
 
 // ── Gemini API Call ───────────────────────────
 async function callGemini(systemInstruction, messages) {
+  if (state.apiKey === "FREE_PREVIEW_KEY_PLACEHOLDER") {
+    // Free Preview Mock Response
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        state.apiKey = ''; // Reset so they need a real key next time
+        LS.set('apiKey', '');
+        resolve(`I love this idea! I've gone ahead and broken it down into a structured Company Brief for us.
+
+[ACTION_ITEM: Startup Context]
+{
+  "name": "Project Alpha",
+  "stage": "Idea / Pre-Product",
+  "market": "Consumers / B2C",
+  "problem": "We are building a platform that solves the core problem you just described.",
+  "revenue": "$0",
+  "goal": "Launch MVP and get first 10 paying customers"
+}
+[/ACTION_ITEM]
+
+Review the brief above and click **Approve & Save** to add it to your Startup Context. Once you do that, we can move into the Product or Growth departments. 
+
+*(Note: To continue building, please click Settings and add your free Google Gemini API key!)*`);
+      }, 2000);
+    });
+  }
+
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${state.apiKey}`;
 
   // Convert messages to Gemini format
@@ -460,10 +486,36 @@ function appendMessage(role, text, time, animate = true) {
     bubble.textContent = text;
   } else {
     bubble.className += ' md-content';
+    let contentText = text;
+    let actionItemHtml = '';
+
+    // Parse [ACTION_ITEM: Title] blocks
+    const actionRegex = /\[ACTION_ITEM:\s*(.*?)\]([\s\S]*?)\[\/ACTION_ITEM\]/g;
+    let match;
+    while ((match = actionRegex.exec(text)) !== null) {
+      const title = match[1];
+      const jsonContent = match[2].trim();
+      contentText = contentText.replace(match[0], '').trim();
+
+      actionItemHtml += `
+        <div class="action-item-card">
+          <div class="action-item-header">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            Pending Action: ${title}
+          </div>
+          <div class="action-item-body">${escapeHtml(jsonContent)}</div>
+          <div class="action-item-footer">
+            <button class="action-btn-reject" onclick="this.closest('.action-item-card').remove();">Reject</button>
+            <button class="action-btn-approve" onclick="handleActionApprove(this, '${escapeHtml(jsonContent).replace(/'/g, "\\'")}');">Approve & Save</button>
+          </div>
+        </div>
+      `;
+    }
+
     try {
-      bubble.innerHTML = marked.parse(text);
+      bubble.innerHTML = marked.parse(contentText) + actionItemHtml;
     } catch {
-      bubble.textContent = text;
+      bubble.innerHTML = contentText + actionItemHtml;
     }
   }
 
@@ -725,3 +777,137 @@ if (typeof exportPptxBtn !== 'undefined' && exportPptxBtn) {
   });
 }
 
+window.handleActionApprove = function(btn, jsonStr) {
+  try {
+    const data = JSON.parse(jsonStr.replace(/&quot;/g, '\"'));
+    const ctx = state.context;
+    if(data.name) ctx.name = data.name;
+    if(data.stage) ctx.stage = data.stage;
+    if(data.market) ctx.market = data.market;
+    if(data.problem) ctx.problem = data.problem;
+    if(data.revenue) ctx.revenue = data.revenue;
+    if(data.goal) ctx.goal = data.goal;
+    
+    LS.set('context', ctx);
+    loadContextForm();
+    
+    btn.closest('.action-item-card').innerHTML = '<div style="padding: 16px; color: var(--green); font-weight: 500; display: flex; align-items: center; gap: 8px;"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Context Approved & Saved!</div>';
+    showToast('Startup Context updated successfully.');
+  } catch(e) {
+    console.error('Failed to parse Action Item JSON', e);
+    showToast('Error saving context.');
+  }
+};
+
+
+// ── Instant Business Dashboard ───────────────────────────
+window.generateBusinessDashboard = async function(idea) {
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const dashboardScreen = document.getElementById('dashboardScreen');
+  const dashboardLoading = document.getElementById('dashboardLoading');
+  const dashboardGrid = document.getElementById('dashboardGrid');
+  const dashboardActions = document.getElementById('dashboardActions');
+  
+  // Hide welcome, show dashboard loading
+  if(welcomeScreen) welcomeScreen.style.display = 'none';
+  if(dashboardScreen) dashboardScreen.style.display = 'block';
+  dashboardLoading.style.display = 'flex';
+  dashboardGrid.style.display = 'none';
+  dashboardActions.style.display = 'none';
+
+  const prompt = `You are an elite VC and startup consultant. The user has an idea: "${idea}"
+  
+Generate a comprehensive, mathematically sound, and highly strategic business breakdown.
+Return ONLY valid JSON matching this exact schema:
+{
+  "startupName": "A catchy, short name for the startup",
+  "oneLiner": "A punchy, 10-word value proposition",
+  "targetAudience": "Who is the exact ICP? Be specific.",
+  "coreProblem": "What painful problem are they solving? 1-2 sentences.",
+  "valueProposition": "How does this solve the problem 10x better?",
+  "businessModel": "How will they make money? (e.g., $99/mo SaaS, 15% take rate).",
+  "gtmStrategy": "A 3-step actionable go-to-market plan to get the first 100 customers."
+}`;
+
+  try {
+    const apiKey = localStorage.getItem('forgeai_api_key');
+    if (!apiKey) throw new Error("No API key found. Please log in.");
+    
+    // We do a raw fetch to ensure we can use JSON responseMimeType
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${window.SELECTED_MODEL || 'gemini-1.5-flash'}:generateContent?key=${apiKey}`;
+    const body = {
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        responseMimeType: "application/json"
+      }
+    };
+    
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    if (!res.ok) throw new Error("Failed to generate dashboard");
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    if (!text) throw new Error("No text returned");
+    
+    const insights = JSON.parse(text);
+    
+    // Populate UI
+    document.getElementById('dashStartupName').textContent = insights.startupName;
+    document.getElementById('dashOneLiner').textContent = insights.oneLiner;
+    document.getElementById('dashAudience').textContent = insights.targetAudience;
+    document.getElementById('dashProblem').textContent = insights.coreProblem;
+    document.getElementById('dashValueProp').textContent = insights.valueProposition;
+    document.getElementById('dashBusinessModel').textContent = insights.businessModel;
+    
+    // Convert 3-step GTM into list items
+    const gtmArr = insights.gtmStrategy.split(/(?=\d\.)/);
+    let gtmHtml = '<ul>';
+    for(const step of gtmArr) {
+      if(step.trim().length > 0) gtmHtml += `<li>${step.trim()}</li>`;
+    }
+    gtmHtml += '</ul>';
+    document.getElementById('dashGTM').innerHTML = gtmHtml;
+    
+    // Switch UI states
+    dashboardLoading.style.display = 'none';
+    dashboardGrid.style.display = 'grid';
+    dashboardActions.style.display = 'block';
+    
+    // Save state internally as first message
+    window.currentProjectId = 'proj_' + Date.now();
+    window.currentPlaybook = 'company-builder';
+    db.projects.add({
+      id: window.currentProjectId,
+      playbookId: window.currentPlaybook,
+      title: insights.startupName,
+      updatedAt: new Date().toISOString()
+    });
+    
+    // Prepare chat history behind the scenes
+    const initMsg = {
+      role: 'ai',
+      text: `I've generated a business strategy dashboard for **${insights.startupName}** based on your idea: *"${idea}"*.\n\nWhat area would you like to drill into next? We can expand the GTM strategy, build a Pitch Deck, or refine the Business Model.`,
+      time: new Date().toISOString()
+    };
+    db.messages.add({ projectId: window.currentProjectId, ...initMsg });
+    
+    document.getElementById('dashContinueBtn').onclick = () => {
+      // Hide dashboard, show chat
+      dashboardScreen.style.display = 'none';
+      document.getElementById('chatMessages').style.display = 'flex';
+      
+      // Load the chat we just saved
+      loadProject(window.currentProjectId);
+    };
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById('dashboardLoadingText').textContent = "Error generating dashboard. Please refresh and try again.";
+  }
+};

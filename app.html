@@ -126,9 +126,9 @@
         New Chat
       </button>
 
-      <!-- Playbooks Section -->
+      <!-- Departments Section -->
       <div class="sidebar-section">
-        <div class="sidebar-section-label">Playbooks</div>
+        <div class="sidebar-section-label">Departments</div>
         <div class="playbook-list" id="playbookList">
           <!-- Injected by JS -->
         </div>
@@ -203,7 +203,7 @@
         <div class="welcome-content">
           <div class="welcome-icon"></div>
           <h1 class="welcome-title">What are we building today?</h1>
-          <p class="welcome-sub">Pick a playbook to start with expert guidance, or just start chatting.</p>
+          <p class="welcome-sub">Pick a department to start with expert guidance, or just start chatting.</p>
           <div class="welcome-playbooks" id="welcomePlaybooks">
             <!-- Injected by JS -->
           </div>
@@ -214,6 +214,46 @@
         </div>
       </div>
 
+
+      <!-- Business Dashboard Screen -->
+      <div class="dashboard-screen" id="dashboardScreen" style="display:none;">
+        <div class="dashboard-header">
+          <h2 id="dashStartupName" class="dash-title">Loading...</h2>
+          <p id="dashOneLiner" class="dash-subtitle">Analyzing market and generating business model...</p>
+        </div>
+        
+        <div class="dashboard-loading" id="dashboardLoading">
+          <div class="spinner"></div>
+          <p id="dashboardLoadingText">Forging your business strategy...</p>
+        </div>
+
+        <div class="dashboard-grid" id="dashboardGrid" style="display:none;">
+          <div class="dash-card">
+            <h3>🎯 Target Audience & ICP</h3>
+            <p id="dashAudience"></p>
+          </div>
+          <div class="dash-card">
+            <h3>🚨 Core Problem</h3>
+            <p id="dashProblem"></p>
+          </div>
+          <div class="dash-card">
+            <h3>💡 Value Proposition</h3>
+            <p id="dashValueProp"></p>
+          </div>
+          <div class="dash-card">
+            <h3>💰 Business Model</h3>
+            <p id="dashBusinessModel"></p>
+          </div>
+          <div class="dash-card full-width">
+            <h3>🚀 Go-To-Market Strategy</h3>
+            <div id="dashGTM"></div>
+          </div>
+        </div>
+        
+        <div class="dashboard-actions" id="dashboardActions" style="display:none; margin-top: 24px; text-align: center;">
+          <button class="btn btn-primary btn-lg" id="dashContinueBtn" style="padding: 12px 32px;">Continue to Workspace →</button>
+        </div>
+      </div>
       <!-- Chat Messages -->
       <div class="chat-messages" id="chatMessages" style="display:none">
         <!-- Injected by JS -->
