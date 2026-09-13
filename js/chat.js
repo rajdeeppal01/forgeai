@@ -218,6 +218,17 @@ saveContextBtn?.addEventListener('click', () => {
     goal:    ctxGoal?.value.trim()    || '',
   };
   LS.set('context', state.context);
+  
+  // Also rename active project if name changed
+  if (state.activeProjectId && state.context.name) {
+    const projIdx = state.projects.findIndex(p => p.id === state.activeProjectId);
+    if (projIdx !== -1 && state.projects[projIdx].name !== state.context.name) {
+      state.projects[projIdx].name = state.context.name;
+      LS.set('projects', state.projects);
+      if (typeof renderProjectList === 'function') renderProjectList();
+      if (typeof syncProjectToFirestore === 'function') syncProjectToFirestore(state.projects[projIdx]);
+    }
+  }
   if (typeof syncContextToFirestore === 'function') {
     syncContextToFirestore();
   } else {
@@ -904,6 +915,19 @@ Return ONLY valid JSON matching this exact schema:
     LS.set('projects', state.projects);
     if (typeof renderProjectList === 'function') renderProjectList();
     if (typeof syncProjectToFirestore === 'function') syncProjectToFirestore(proj);
+    
+    // AUTO-FILL CONTEXT
+    state.context = {
+      name: insights.startupName,
+      stage: 'Idea / Pre-Product',
+      market: insights.targetAudience,
+      problem: insights.coreProblem,
+      revenue: '0',
+      goal: 'Launch MVP and get first 10 customers'
+    };
+    LS.set('context', state.context);
+    if (typeof loadContextForm === 'function') loadContextForm();
+    if (typeof syncContextToFirestore === 'function') syncContextToFirestore();
     
     document.getElementById('dashContinueBtn').onclick = () => {
       dashboardScreen.style.display = 'none';
