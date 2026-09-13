@@ -837,7 +837,7 @@ Return ONLY valid JSON matching this exact schema:
     if (!apiKey || apiKey === 'FREE_PREVIEW_KEY_PLACEHOLDER') throw new Error("No API key provided. Please log in or enter an API key.");
     
     // We do a raw fetch to ensure we can use JSON responseMimeType
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${window.SELECTED_MODEL || 'gemini-1.5-flash'}:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${apiKey}`;
     const body = {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
