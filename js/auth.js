@@ -96,7 +96,7 @@ if (saveApiKeyBtn) {
       LS.set('apiKey', key);
       apiKeyModal.classList.add('hidden');
       appShell.style.display = 'grid';
-      loadApp();
+      if (typeof checkApiKey === 'function') checkApiKey(); else loadApp();
     } else {
       apiKeyError.textContent = validationResult.error || 'Invalid API key. Please check and try again.';
       saveApiKeyBtn.textContent = 'Save & Launch ForgeAI →';

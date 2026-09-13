@@ -776,7 +776,8 @@ if (typeof exportPptxBtn !== 'undefined' && exportPptxBtn) {
     }
   });
 }
-
+
+
 window.handleActionApprove = function(btn, jsonStr) {
   try {
     const data = JSON.parse(jsonStr.replace(/&quot;/g, '\"'));
@@ -814,6 +815,8 @@ window.generateBusinessDashboard = async function(idea) {
   dashboardLoading.style.display = 'flex';
   dashboardGrid.style.display = 'none';
   dashboardActions.style.display = 'none';
+  const chatInputArea = document.querySelector('.chat-input-area');
+  if(chatInputArea) chatInputArea.style.display = 'none';
 
   const prompt = `You are an elite VC and startup consultant. The user has an idea: "${idea}"
   
@@ -830,8 +833,8 @@ Return ONLY valid JSON matching this exact schema:
 }`;
 
   try {
-    const apiKey = localStorage.getItem('forgeai_api_key');
-    if (!apiKey) throw new Error("No API key found. Please log in.");
+    const apiKey = state.apiKey;
+    if (!apiKey || apiKey === 'FREE_PREVIEW_KEY_PLACEHOLDER') throw new Error("No API key provided. Please log in or enter an API key.");
     
     // We do a raw fetch to ensure we can use JSON responseMimeType
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${window.SELECTED_MODEL || 'gemini-1.5-flash'}:generateContent?key=${apiKey}`;
@@ -900,6 +903,7 @@ Return ONLY valid JSON matching this exact schema:
     document.getElementById('dashContinueBtn').onclick = () => {
       // Hide dashboard, show chat
       dashboardScreen.style.display = 'none';
+      if(chatInputArea) chatInputArea.style.display = '';
       document.getElementById('chatMessages').style.display = 'flex';
       
       // Load the chat we just saved

@@ -23,13 +23,7 @@ function init() {
     switchAuthMode(true);
   }
 
-  if (ideaParam) {
-    // Free Preview bypass for the first action
-    if (!state.apiKey) {
-      state.apiKey = "FREE_PREVIEW_KEY_PLACEHOLDER"; // Fallback key for the preview
-    }
-    // We will process the idea after auth/sync is complete
-  }
+
 
   // Check Auth State
   try {
