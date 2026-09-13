@@ -71,78 +71,41 @@
   </nav>
 
   <!-- ── Hero ────────────────────────────── -->
-  <header class="hero">
-    <div class="hero-bg">
-      <div class="hero-grid"></div>
-    </div>
-    <div class="container">
-      <div class="hero-content">
-        <div class="badge badge-accent hero-badge">
-          <span class="badge-dot"></span> ForgeAI Company Builder
-        </div>
-        <h1 class="hero-headline">
-          What are we building today?<br/>
-          <span style="font-size: 1.5rem; color: var(--text-muted); font-weight: 500;">Describe your idea in a sentence.</span>
+  <header class="hero" style="text-align: center;">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; max-width: 800px; margin: 0 auto; gap: 40px; justify-content: center;">
+      <div class="hero-content" style="align-items: center; width: 100%;">
+        <h1 class="hero-headline" style="font-size: clamp(3.5rem, 6vw, 5rem); letter-spacing: -0.04em;">
+          What's your idea?
         </h1>
+        <p style="font-size: 1.25rem; color: var(--text-primary); margin-top: 16px;">Build and run your company on ForgeAI</p>
         
-        <form class="hero-prompt-form" id="heroPromptForm" onsubmit="event.preventDefault(); window.location.href='app.html?idea=' + encodeURIComponent(document.getElementById('heroIdeaInput').value);">
-          <div class="hero-prompt-wrapper">
+        <form class="hero-prompt-form" id="heroPromptForm" style="width: 100%; max-width: 720px; margin-top: 32px;" onsubmit="event.preventDefault(); window.location.href='app.html?idea=' + encodeURIComponent(document.getElementById('heroIdeaInput').value);">
+          <div class="hero-prompt-wrapper" style="border-radius: 16px; padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); align-items: flex-end; flex-direction: column; max-width: 100%;">
             <textarea 
               id="heroIdeaInput" 
               class="hero-prompt-input" 
-              placeholder="e.g. A two-sided marketplace for local chefs to sell weekly meal prep subscriptions..."
-              rows="1"
+              placeholder="Describe the company you want to build..."
+              rows="2"
               required
+              style="width: 100%; min-height: 80px; padding: 8px; font-size: 1.1rem;"
             ></textarea>
-            <button type="submit" class="btn btn-primary hero-prompt-btn" aria-label="Start Building">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-top: 12px;">
+              <button type="button" class="btn" style="border-radius: 50%; width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary);">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              <button type="submit" class="btn btn-primary" style="border-radius: 20px; padding: 8px 24px; background: white; color: black; font-weight: 600;" aria-label="Start Building">
+                Start →
+              </button>
+            </div>
           </div>
-          <p class="hero-prompt-hint">Press <strong>Enter</strong> to start building for free.</p>
         </form>
 
       </div>
-
-      <!-- Hero App Preview -->
-      <div class="hero-preview">
-        <div class="preview-chrome">
-          <div class="chrome-dots">
-            <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-          </div>
-          <div class="chrome-url">app.forgeai.co</div>
-        </div>
-        <div class="preview-video coded-demo" style="background: var(--bg-primary);">
-          <div class="demo-sidebar">
-            <div class="demo-skeleton-title"></div>
-            <div class="demo-skeleton-item"></div>
-            <div class="demo-skeleton-item"></div>
-            <div class="demo-skeleton-item"></div>
-          </div>
-          <div class="demo-main">
-            <div class="demo-header">
-              <div class="demo-skeleton-title" style="width: 120px;"></div>
-            </div>
-            <div class="demo-body">
-              <div class="demo-msg user-msg">
-                Generate a Go-to-Market Strategy for a B2B SaaS
-              </div>
-              <div class="demo-msg ai-msg" id="aiResponse">
-                <div class="ai-content">
-                  <div class="demo-skeleton-title" style="width: 60%; margin-bottom: 12px;"></div>
-                  <div class="demo-skeleton-text"></div>
-                  <div class="demo-skeleton-text"></div>
-                  <div class="demo-skeleton-text" style="width: 80%;"></div>
-                </div>
-              </div>
-            </div>
-            <div class="demo-input-bar">
-              <div class="demo-input-box">Generating Go-to-Market Strategy...</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </header>
+
 
 
   <!-- ── Features ────────────────────────────── -->
