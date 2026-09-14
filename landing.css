@@ -2,6 +2,10 @@
    ForgeAI — Landing Page Styles
    ============================================= */
 
+body {
+  background: transparent !important;
+}
+
 /* ── Navbar ──────────────────────────────────── */
 .navbar {
   position: fixed;
@@ -486,6 +490,8 @@
 .cta-final h2 { font-size: 2.6rem; font-weight: 900; letter-spacing: -0.02em; }
 .cta-final p  { font-size: 1rem; color: var(--text-secondary); max-width: 440px; }
 .cta-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+
 
 /* ── Footer ──────────────────────────────────── */
 .footer {

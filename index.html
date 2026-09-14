@@ -388,55 +388,45 @@
 
   <script type="module">
     import { initGhostFibers } from './js/ghost-fibers.js';
-    const container = document.querySelector('.hero');
-    if (container) {
-      container.style.position = 'relative';
-      container.style.overflow = 'hidden';
-      // We create a specific bg div because the hero might have padding that affects canvas layout
-      const bg = document.createElement('div');
-      bg.style.position = 'absolute';
-      bg.style.top = '0';
-      bg.style.left = '0';
-      bg.style.width = '100%';
-      bg.style.height = '100%';
-      bg.style.zIndex = '0'; // Behind content
-      container.insertBefore(bg, container.firstChild);
-      
-      // Make sure other hero children are above the canvas
-      Array.from(container.children).forEach(child => {
-        if (child !== bg) {
-          child.style.position = 'relative';
-          child.style.zIndex = '1';
-        }
-      });
-
-      initGhostFibers(bg, {
-        lineColor: "#a8185b",
-        glowColor: "#a03480",
-        speed: 0.2,
-        scale: 2,
-        rotation: 0,
-        rotationSpeed: 0.25,
-        layers: 4,
-        waveAmplitude: 0.015,
-        waveFrequency: 3,
-        waveSpeed: 0.15,
-        layerSpeed: 0.08,
-        twist: 0.1,
-        twistFrequency: 5,
-        twistSpeed: 1.2,
-        lineFrequency: 5,
-        lineSpacing: 2,
-        lineSharpness: 16,
-        glowFalloff: 10,
-        glowIntensity: 1.6,
-        brightness: 2,
-        blueBoost: 1.25,
-        vignette: 0.8,
-        grain: 0.05,
-        dpr: window.devicePixelRatio || 1
-      });
-    }
+    
+    // Create a global background container
+    const bg = document.createElement('div');
+    bg.id = 'global-bg';
+    bg.style.position = 'fixed';
+    bg.style.top = '0';
+    bg.style.left = '0';
+    bg.style.width = '100vw';
+    bg.style.height = '100vh';
+    bg.style.zIndex = '-1';
+    bg.style.pointerEvents = 'none'; // so it doesn't block clicks
+    document.body.insertBefore(bg, document.body.firstChild);
+    
+    initGhostFibers(bg, {
+      lineColor: "#a8185b",
+      glowColor: "#a03480",
+      speed: 0.2,
+      scale: 2,
+      rotation: 0,
+      rotationSpeed: 0.25,
+      layers: 4,
+      waveAmplitude: 0.015,
+      waveFrequency: 3,
+      waveSpeed: 0.15,
+      layerSpeed: 0.08,
+      twist: 0.1,
+      twistFrequency: 5,
+      twistSpeed: 1.2,
+      lineFrequency: 5,
+      lineSpacing: 2,
+      lineSharpness: 16,
+      glowFalloff: 10,
+      glowIntensity: 1.6,
+      brightness: 2,
+      blueBoost: 1.25,
+      vignette: 0.8,
+      grain: 0.05,
+      dpr: window.devicePixelRatio || 1
+    });
   </script>
 </body>
 </html>
