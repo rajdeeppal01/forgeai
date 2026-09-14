@@ -1,4 +1,4 @@
-import { Renderer, Program, Triangle, Mesh } from 'https://cdn.jsdelivr.net/npm/ogl@0.0.117/dist/ogl.mjs';
+import { Renderer, Program, Triangle, Mesh } from 'https://esm.sh/ogl';
 
 const hexToRgb = hex => {
   const value = hex.trim().replace(/^#/, '');
