@@ -84,13 +84,89 @@ function activatePlaybook(key) {
 
   // If not general, add a greeting
   if (pb.key !== 'general') {
-    const greeting = getPlaybookGreeting(pb);
     state.messages = [];
     if (window.startGreetingTimeoutId) clearTimeout(window.startGreetingTimeoutId);
-    window.startGreetingTimeoutId = setTimeout(() => startPlaybookGreeting(pb, greeting), 100);
+    
+    const ctx = state.context;
+    const hasCtx = ctx.name || ctx.problem;
+    
+    if (hasCtx) {
+      // Use AI generated playbook
+      generateCustomPlaybookGreeting(pb);
+    } else {
+      // Fallback to static
+      const greeting = getPlaybookGreeting(pb);
+      window.startGreetingTimeoutId = setTimeout(() => startPlaybookGreeting(pb, greeting), 100);
+    }
   }
 
   closeMobileSidebar();
+}
+
+
+async function generateCustomPlaybookGreeting(pb) {
+  welcomeScreen.style.display = 'none';
+  chatMessages.style.display = 'flex';
+  
+  // Show typing indicator in chat
+  showTypingIndicator();
+  
+  const ctxString = buildContextString();
+  const prompt = `You are an elite startup advisor and VC. The user has opened the "${pb.name}" department playbook.
+  
+Here is their startup context:${ctxString}
+
+Please generate a highly customized, actionable 3-step initial playbook for ${pb.name} tailored specifically to this startup's context. 
+Be concise, use markdown formatting, and make the advice highly specific to their stated problem and market.
+End the message by asking the user for their thoughts or feedback on this plan, or what they'd like to dive into first.`;
+
+  try {
+    const apiKey = state.apiKey;
+    if (!apiKey || apiKey === 'FREE_PREVIEW_KEY_PLACEHOLDER') {
+      throw new Error("No API key provided.");
+    }
+
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000,
+        }
+      })
+    });
+
+    removeTypingIndicator();
+
+    if (!res.ok) {
+      throw new Error(`API error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    let text = '';
+    if (data.candidates && data.candidates[0].content.parts) {
+      text = data.candidates[0].content.parts.map(p => p.text).join('');
+    } else {
+      throw new Error("Invalid response format");
+    }
+
+    const aiMsg = { role: 'model', parts: [{ text: text }] };
+    state.messages.push(aiMsg);
+    appendMessage('model', text, formatTime());
+    autoSave();
+
+  } catch (err) {
+    console.error('Error generating custom playbook:', err);
+    removeTypingIndicator();
+    // Fallback to static greeting
+    const staticGreeting = getPlaybookGreeting(pb);
+    const aiMsg = { role: 'model', parts: [{ text: staticGreeting }] };
+    state.messages.push(aiMsg);
+    appendMessage('model', staticGreeting, formatTime());
+    autoSave();
+  }
 }
 
 function getPlaybookGreeting(pb) {
