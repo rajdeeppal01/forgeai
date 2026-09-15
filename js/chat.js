@@ -1138,6 +1138,59 @@ function showProjectContextMenu(e, proj) {
 }
 
 // ── Onboarding Handlers ───────────────────────
+
+let currentOnboardStep = 1;
+const onboardNextBtn = document.getElementById('onboardNextBtn');
+const onboardBackBtn = document.getElementById('onboardBackBtn');
+const onboardStep1 = document.getElementById('onboardStep1');
+const onboardStep2 = document.getElementById('onboardStep2');
+const onboardStep3 = document.getElementById('onboardStep3');
+const onboardTitle = document.getElementById('onboardTitle');
+const onboardDesc = document.getElementById('onboardDesc');
+
+function updateOnboardSteps() {
+  if (onboardStep1) onboardStep1.style.display = currentOnboardStep === 1 ? 'block' : 'none';
+  if (onboardStep2) onboardStep2.style.display = currentOnboardStep === 2 ? 'block' : 'none';
+  if (onboardStep3) onboardStep3.style.display = currentOnboardStep === 3 ? 'block' : 'none';
+  
+  if (currentOnboardStep === 1) {
+    if (onboardBackBtn) onboardBackBtn.style.display = 'none';
+    if (onboardNextBtn) onboardNextBtn.style.display = 'flex';
+    if (onboardSubmitBtn) onboardSubmitBtn.style.display = 'none';
+    if (onboardTitle) onboardTitle.textContent = 'Welcome to ForgeAI';
+  } else if (currentOnboardStep === 2) {
+    if (onboardBackBtn) onboardBackBtn.style.display = 'flex';
+    if (onboardNextBtn) onboardNextBtn.style.display = 'flex';
+    if (onboardSubmitBtn) onboardSubmitBtn.style.display = 'none';
+    if (onboardTitle) onboardTitle.textContent = 'The Problem';
+  } else if (currentOnboardStep === 3) {
+    if (onboardBackBtn) onboardBackBtn.style.display = 'flex';
+    if (onboardNextBtn) onboardNextBtn.style.display = 'none';
+    if (onboardSubmitBtn) onboardSubmitBtn.style.display = 'flex';
+    if (onboardTitle) onboardTitle.textContent = 'The Market';
+  }
+}
+
+if (onboardNextBtn) {
+  onboardNextBtn.addEventListener('click', () => {
+    if (currentOnboardStep < 3) {
+      currentOnboardStep++;
+      updateOnboardSteps();
+    }
+  });
+}
+
+if (onboardBackBtn) {
+  onboardBackBtn.addEventListener('click', () => {
+    if (currentOnboardStep > 1) {
+      currentOnboardStep--;
+      updateOnboardSteps();
+    }
+  });
+}
+
+// Reset steps when skipping or submitting
+
 const onboardSubmitBtn = document.getElementById('onboardSubmitBtn');
 const onboardSkipBtn = document.getElementById('onboardSkipBtn');
 const onboardingModal = document.getElementById('onboardingModal');
@@ -1194,6 +1247,8 @@ if (onboardSubmitBtn) {
     renderProjectList();
     loadContextForm();
     onboardingModal.classList.add('hidden');
+    currentOnboardStep = 1;
+    if (typeof updateOnboardSteps === 'function') updateOnboardSteps();
     
     // Open context panel to show where it is
     state.contextPanelOpen = true;
@@ -1205,5 +1260,7 @@ if (onboardSkipBtn) {
   onboardSkipBtn.addEventListener('click', () => {
     LS.set('onboardingDone', true);
     onboardingModal.classList.add('hidden');
+    currentOnboardStep = 1;
+    if (typeof updateOnboardSteps === 'function') updateOnboardSteps();
   });
 }
