@@ -128,7 +128,9 @@ Here is their startup context:${ctxString}
 
 Please generate a highly customized, actionable 3-step initial playbook for ${pb.name} tailored specifically to this startup's context. 
 Be concise, use markdown formatting, and make the advice highly specific to their stated problem and market.
-End the message by asking the user for their thoughts or feedback on this plan, or what they'd like to dive into first.`;
+End the message by asking the user for their thoughts or feedback on this plan, or what they'd like to dive into first.
+
+IMPORTANT: Do NOT include any internal thoughts, self-evaluations, or "Tone Checks" in your response. Output ONLY the final message meant for the user.`;
 
   try {
     const apiKey = state.apiKey;
