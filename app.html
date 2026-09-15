@@ -108,9 +108,9 @@
   
   <!-- ── Onboarding Modal ──────────────────────── -->
   <div class="modal-overlay hidden" id="onboardingModal" style="z-index: 10000;">
-    <div class="modal-box" style="max-width: 500px; text-align: center;">
-      <h2 id="onboardTitle">Welcome to ForgeAI</h2>
-      <p id="onboardDesc" style="margin-bottom: 24px; color: var(--text-muted);">Let's set up your project. This helps the AI tailor its advice for you.</p>
+    <div class="modal-box" style="max-width: 500px; text-align: center; padding: 32px 40px;">
+      <h2 id="onboardTitle" style="margin-bottom: 8px; font-size: 1.6rem;">Welcome to ForgeAI</h2>
+      <p id="onboardDesc" style="margin-bottom: 24px; color: var(--text-muted); line-height: 1.4; padding: 0 10px;">Let's set up your project. This helps the AI tailor its advice for you.</p>
       
       <!-- Step 1 -->
       <div id="onboardStep1" class="onboard-step" style="text-align: left;">
@@ -131,13 +131,13 @@
       </div>
 
       <div style="display: flex; gap: 12px; margin-top: 8px;">
-        <button class="btn" id="onboardBackBtn" style="display:none; justify-content:center; flex: 1; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border);">
+        <button class="btn" id="onboardBackBtn" style="display:none; justify-content:center; flex: 1; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); padding: 10px;">
           Back
         </button>
-        <button class="btn btn-primary" id="onboardNextBtn" style="justify-content:center; flex: 1;">
+        <button class="btn btn-primary" id="onboardNextBtn" style="justify-content:center; flex: 1; padding: 10px;">
           Next →
         </button>
-        <button class="btn btn-primary" id="onboardSubmitBtn" style="display:none; justify-content:center; flex: 1;">
+        <button class="btn btn-primary" id="onboardSubmitBtn" style="display:none; justify-content:center; flex: 1; padding: 10px;">
           Start Building →
         </button>
       </div>
