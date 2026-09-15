@@ -253,6 +253,12 @@ function loadProjectMessages(proj) {
   state.context = proj.context || {};
   loadContextForm();
 
+  // If the context is completely empty, prompt the user to fill it out
+  if (!state.context.name && !state.context.problem && !state.context.market) {
+    const onboardingModal = document.getElementById('onboardingModal');
+    if (onboardingModal) onboardingModal.classList.remove('hidden');
+  }
+
   const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
   activePlaybookName.textContent = `📁 ${proj.name}`;
 
@@ -1150,22 +1156,40 @@ if (onboardSubmitBtn) {
       goal: ''
     };
     
-    // Create first project
-    const proj = {
-      id: Date.now().toString(),
-      name: state.context.name || 'My First Startup',
-      messages: [],
-      playbook: 'general',
-      context: { ...state.context },
-      createdAt: new Date().toISOString()
-    };
+    if (state.activeProjectId) {
+      // Update existing project
+      const idx = state.projects.findIndex(p => p.id === state.activeProjectId);
+      if (idx !== -1) {
+        state.projects[idx].context = { ...state.context };
+        LS.set('projects', state.projects);
+        if (typeof syncProjectToFirestore === 'function') syncProjectToFirestore(state.projects[idx]);
+      }
+      showToast('✓ Project context updated!');
+    } else {
+      // Create first project
+      const proj = {
+        id: Date.now().toString(),
+        name: state.context.name || 'My First Startup',
+        messages: [],
+        playbook: 'general',
+        context: { ...state.context },
+        createdAt: new Date().toISOString()
+      };
+      
+      state.projects.unshift(proj);
+      state.activeProjectId = proj.id;
+      LS.set('activeProject', proj.id);
+      LS.set('projects', state.projects);
+      showToast('✓ Project created based on your answers!');
+    }
     
-    state.projects.unshift(proj);
-    state.activeProjectId = proj.id;
-    LS.set('activeProject', proj.id);
-    LS.set('projects', state.projects);
     LS.set('context', state.context);
     LS.set('onboardingDone', true);
+    
+    // Clear the form fields for next time
+    onboardName.value = '';
+    onboardProblem.value = '';
+    onboardMarket.value = '';
     
     renderProjectList();
     loadContextForm();
@@ -1174,7 +1198,6 @@ if (onboardSubmitBtn) {
     // Open context panel to show where it is
     state.contextPanelOpen = true;
     document.getElementById('appShell').classList.remove('context-collapsed');
-    showToast('✓ Project created based on your answers!');
   });
 }
 
