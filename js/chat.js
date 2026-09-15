@@ -227,7 +227,7 @@ function renderProjectList() {
     const el = document.createElement('div');
     el.className = `sidebar-item ${proj.id === state.activeProjectId ? 'active' : ''}`;
     el.innerHTML = `
-      <span class="sidebar-item-icon">📁</span>
+      <span class="sidebar-item-icon"></span>
       <span class="sidebar-item-label">${escapeHtml(proj.name)}</span>
     `;
     el.addEventListener('click', () => {
@@ -260,7 +260,7 @@ function loadProjectMessages(proj) {
   }
 
   const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
-  activePlaybookName.textContent = `📁 ${proj.name}`;
+  activePlaybookName.textContent = proj.name;
 
   chatMessages.innerHTML = '';
 
@@ -661,8 +661,10 @@ function appendMessage(role, text, time, animate = true) {
 }
 
 function getUserInitial() {
-  const name = state.context?.name;
-  return name ? name[0].toUpperCase() : 'U';
+  if (window.currentUser && window.currentUser.email) {
+    return window.currentUser.email[0].toUpperCase();
+  }
+  return 'R'; // Fallback to R as requested by the user
 }
 
 function showTypingIndicator() {
@@ -1093,7 +1095,7 @@ function showProjectContextMenu(e, proj) {
       saveProjectsToFirebase();
       renderProjectList();
       if(state.activeProjectId === proj.id) {
-        activePlaybookName.textContent = `📁 ${proj.name}`;
+        activePlaybookName.textContent = proj.name;
       }
     }
   };
