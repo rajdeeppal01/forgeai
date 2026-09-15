@@ -84,10 +84,10 @@ function activatePlaybook(key) {
   activePlaybookName.textContent = pb.name;
   renderPlaybookList();
 
-  // Show welcome or reset chat
+  // Reset views
   chatMessages.innerHTML = '';
   chatMessages.style.display = 'none';
-  welcomeScreen.style.display = 'flex';
+  welcomeScreen.style.display = 'none';
 
   // If not general, add a greeting
   if (pb.key !== 'general') {
@@ -103,8 +103,11 @@ function activatePlaybook(key) {
     } else {
       // Fallback to static
       const greeting = getPlaybookGreeting(pb);
-      window.startGreetingTimeoutId = setTimeout(() => startPlaybookGreeting(pb, greeting), 100);
+      startPlaybookGreeting(pb, greeting);
     }
+  } else {
+    // General playbook (Company Builder) shows the dashboard
+    welcomeScreen.style.display = 'flex';
   }
 
   closeMobileSidebar();
