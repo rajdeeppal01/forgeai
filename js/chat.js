@@ -11,6 +11,13 @@ function loadApp(preselectedPlaybook = null) {
     const proj = state.projects.find(p => p.id === state.activeProjectId);
     if (proj) loadProjectMessages(proj);
   }
+  
+  // Show onboarding if no projects
+  if (state.projects.length === 0 && !LS.get('onboardingDone')) {
+    const onboardingModal = document.getElementById('onboardingModal');
+    if (onboardingModal) onboardingModal.classList.remove('hidden');
+  }
+
   checkResponsive();
 }
 
@@ -243,6 +250,8 @@ function loadProjectMessages(proj) {
   state.messages = proj.messages || [];
   state.activePlaybook = proj.playbook || 'general';
   state.activeProjectId = proj.id;
+  state.context = proj.context || {};
+  loadContextForm();
 
   const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
   activePlaybookName.textContent = `📁 ${proj.name}`;
@@ -299,11 +308,13 @@ saveContextBtn?.addEventListener('click', () => {
   };
   LS.set('context', state.context);
   
-  // Also rename active project if name changed
-  if (state.activeProjectId && state.context.name) {
+  if (state.activeProjectId) {
     const projIdx = state.projects.findIndex(p => p.id === state.activeProjectId);
-    if (projIdx !== -1 && state.projects[projIdx].name !== state.context.name) {
-      state.projects[projIdx].name = state.context.name;
+    if (projIdx !== -1) {
+      state.projects[projIdx].context = { ...state.context };
+      if (state.context.name && state.projects[projIdx].name !== state.context.name) {
+        state.projects[projIdx].name = state.context.name;
+      }
       LS.set('projects', state.projects);
       if (typeof renderProjectList === 'function') renderProjectList();
       if (typeof syncProjectToFirestore === 'function') syncProjectToFirestore(state.projects[projIdx]);
@@ -397,9 +408,10 @@ async function sendMessage() {
     isNewChat = true;
     const proj = {
       id: Date.now().toString(),
-      name: userText.substring(0, 25) + (userText.length > 25 ? '...' : ''),
+      name: state.context.name || (userText.substring(0, 25) + (userText.length > 25 ? '...' : '')),
       messages: [],
       playbook: state.activePlaybook || 'general',
+      context: { ...state.context },
       createdAt: new Date().toISOString()
     };
     state.projects.unshift(proj); // Add to top
@@ -1117,4 +1129,58 @@ function showProjectContextMenu(e, proj) {
       document.removeEventListener('click', closeMenu);
     });
   }, 0);
+}
+
+// ── Onboarding Handlers ───────────────────────
+const onboardSubmitBtn = document.getElementById('onboardSubmitBtn');
+const onboardSkipBtn = document.getElementById('onboardSkipBtn');
+const onboardingModal = document.getElementById('onboardingModal');
+const onboardName = document.getElementById('onboardName');
+const onboardProblem = document.getElementById('onboardProblem');
+const onboardMarket = document.getElementById('onboardMarket');
+
+if (onboardSubmitBtn) {
+  onboardSubmitBtn.addEventListener('click', () => {
+    state.context = {
+      name: onboardName.value.trim(),
+      problem: onboardProblem.value.trim(),
+      market: onboardMarket.value.trim(),
+      stage: 'Idea / Pre-Product',
+      revenue: '',
+      goal: ''
+    };
+    
+    // Create first project
+    const proj = {
+      id: Date.now().toString(),
+      name: state.context.name || 'My First Startup',
+      messages: [],
+      playbook: 'general',
+      context: { ...state.context },
+      createdAt: new Date().toISOString()
+    };
+    
+    state.projects.unshift(proj);
+    state.activeProjectId = proj.id;
+    LS.set('activeProject', proj.id);
+    LS.set('projects', state.projects);
+    LS.set('context', state.context);
+    LS.set('onboardingDone', true);
+    
+    renderProjectList();
+    loadContextForm();
+    onboardingModal.classList.add('hidden');
+    
+    // Open context panel to show where it is
+    state.contextPanelOpen = true;
+    document.getElementById('appShell').classList.remove('context-collapsed');
+    showToast('✓ Project created based on your answers!');
+  });
+}
+
+if (onboardSkipBtn) {
+  onboardSkipBtn.addEventListener('click', () => {
+    LS.set('onboardingDone', true);
+    onboardingModal.classList.add('hidden');
+  });
 }
