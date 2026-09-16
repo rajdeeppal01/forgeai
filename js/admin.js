@@ -14,37 +14,46 @@ const metricProjects = document.getElementById('metric-projects');
 const usersTableBody = document.getElementById('users-table-body');
 
 // Auth State Observer
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    if (user.email === ADMIN_EMAIL) {
-      // User is Admin
-      loadingOverlay.classList.add('hidden');
-      authView.style.display = 'none';
-      adminView.style.display = 'flex';
-      headerUser.classList.remove('hidden');
-      adminEmailSpan.textContent = user.email;
-      
-      await loadMetrics();
-    } else {
-      // User is logged in but NOT admin
-      loadingOverlay.classList.add('hidden');
-      authView.style.display = 'flex';
-      adminView.style.display = 'none';
-      headerUser.classList.add('hidden');
-      authView.innerHTML = `
-        <h1>Access Denied</h1>
-        <p>Your account (${user.email}) does not have creator privileges.</p>
-        <button class="btn" onclick="signOut()">Sign Out</button>
-      `;
+try {
+  auth.onAuthStateChanged(async (user) => {
+    try {
+      if (user) {
+        if (user.email === ADMIN_EMAIL) {
+          // User is Admin
+          loadingOverlay.classList.add('hidden');
+          authView.style.display = 'none';
+          adminView.style.display = 'flex';
+          headerUser.classList.remove('hidden');
+          adminEmailSpan.textContent = user.email;
+          
+          await loadMetrics();
+        } else {
+          // User is logged in but NOT admin
+          loadingOverlay.classList.add('hidden');
+          authView.style.display = 'flex';
+          adminView.style.display = 'none';
+          headerUser.classList.add('hidden');
+          authView.innerHTML = `
+            <h1>Access Denied</h1>
+            <p>Your account (${user.email}) does not have creator privileges.</p>
+            <button class="btn" onclick="signOut()">Sign Out</button>
+          `;
+        }
+      } else {
+        // User is logged out
+        loadingOverlay.classList.add('hidden');
+        authView.style.display = 'flex';
+        adminView.style.display = 'none';
+        headerUser.classList.add('hidden');
+      }
+    } catch (innerErr) {
+      loadingOverlay.innerHTML = `<span style="color:red">Error in auth callback: ${innerErr.message}</span>`;
     }
-  } else {
-    // User is logged out
-    loadingOverlay.classList.add('hidden');
-    authView.style.display = 'flex';
-    adminView.style.display = 'none';
-    headerUser.classList.add('hidden');
-  }
-});
+  });
+} catch (err) {
+  loadingOverlay.innerHTML = `<span style="color:red">Init Error: ${err.message}</span>`;
+  console.error(err);
+}
 
 // Sign In
 function signInWithGoogle() {
