@@ -60,9 +60,15 @@ try {
 // Sign In
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
+  
+  // Force account selection prompt so you can easily switch accounts
+  provider.setCustomParameters({
+    prompt: 'select_account'
+  });
+  
   adminAuth.signInWithPopup(provider).catch((error) => {
     console.error("Auth Error:", error);
-    alert("Authentication failed.");
+    alert("Authentication failed: " + error.message);
   });
 }
 
