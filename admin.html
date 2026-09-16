@@ -22,6 +22,20 @@
       padding: 0;
     }
 
+    /* Landing Page Grid Theme */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 40%, transparent 100%);
+      pointer-events: none;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
@@ -219,6 +233,8 @@
   </style>
 </head>
 <body>
+  <!-- Landing Page Background Mesh -->
+  <div class="hero-grid"></div>
 
   <div class="loading-overlay" id="loading">Checking access...</div>
 
