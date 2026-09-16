@@ -1,7 +1,9 @@
-// Firebase auth and db are already initialized in firebase-config.js
-
 // The master admin email
 const ADMIN_EMAIL = "rajdeeppalwork@gmail.com";
+
+// Initialize local instances to avoid global scope conflicts
+const adminAuth = firebase.auth();
+const adminDb = firebase.firestore();
 
 // DOM Elements
 const loadingOverlay = document.getElementById('loading');
@@ -15,7 +17,7 @@ const usersTableBody = document.getElementById('users-table-body');
 
 // Auth State Observer
 try {
-  auth.onAuthStateChanged(async (user) => {
+  adminAuth.onAuthStateChanged(async (user) => {
     try {
       if (user) {
         if (user.email === ADMIN_EMAIL) {
@@ -58,7 +60,7 @@ try {
 // Sign In
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch((error) => {
+  adminAuth.signInWithPopup(provider).catch((error) => {
     console.error("Auth Error:", error);
     alert("Authentication failed.");
   });
@@ -66,14 +68,14 @@ function signInWithGoogle() {
 
 // Sign Out
 function signOut() {
-  auth.signOut();
+  adminAuth.signOut();
   window.location.reload();
 }
 
 // Load Dashboard Metrics
 async function loadMetrics() {
   try {
-    const usersSnapshot = await db.collection('users').get();
+    const usersSnapshot = await adminDb.collection('users').get();
     
     let totalUsers = 0;
     let totalProjects = 0;
@@ -107,7 +109,7 @@ async function loadMetrics() {
 
       // Count projects in the subcollection
       promises.push(
-        db.collection('users').doc(uid).collection('projects').get().then(projSnap => {
+        adminDb.collection('users').doc(uid).collection('projects').get().then(projSnap => {
           totalProjects += projSnap.size;
         })
       );
