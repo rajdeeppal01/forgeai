@@ -1,10 +1,4 @@
-// Initialize Firebase from firebase-config.js (loaded before this script)
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Firebase auth and db are already initialized in firebase-config.js
 
 // The master admin email
 const ADMIN_EMAIL = "rajdeeppalwork@gmail.com";
