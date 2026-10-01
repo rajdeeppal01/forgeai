@@ -28,12 +28,10 @@
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 
-  <!-- Prevent Theme FOUC -->
-  <script>
-    if (localStorage.getItem('forgeai_theme') === '"dark"') {
-      document.documentElement.classList.add('dark-theme');
-    }
-  </script>
+  <!-- Prevent White Flash before Canvas loads -->
+  <style>
+    html, body { background-color: #000 !important; }
+  </style>
 </head>
 <body>
 
