@@ -32,6 +32,13 @@ function init() {
       if (user) {
         window.currentUser = user;
         authModal.classList.add('hidden');
+        
+        // Write basic user details to Firestore for admin tracking
+        db.collection('users').doc(user.uid).set({
+          email: user.email,
+          lastActiveAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(console.warn);
+        
         syncFromFirestore(user.uid);
         
         // Show tour on first login

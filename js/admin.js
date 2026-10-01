@@ -94,9 +94,10 @@ async function loadMetrics() {
       const data = doc.data();
       const uid = doc.id;
       
-      // We don't save email/name in 'users' doc directly by default in all flows,
-      // but we can display the UID and check if they have context setup.
+      // We now save email in the 'users' doc directly via app.js
       const hasContext = data.context ? "Yes" : "No";
+      const userEmail = data.email || 'Private';
+      const lastActive = data.lastActiveAt ? new Date(data.lastActiveAt.toDate()).toLocaleDateString() : 'Unknown';
       
       tableHTML += `
         <tr>
@@ -108,7 +109,7 @@ async function loadMetrics() {
               <span>User</span>
             </div>
           </td>
-          <td style="color: var(--text-secondary);">Private</td>
+          <td style="color: var(--text-secondary);">${userEmail}</td>
           <td style="font-family: monospace; color: var(--text-secondary);">${uid}</td>
         </tr>
       `;
