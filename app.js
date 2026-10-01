@@ -62,14 +62,12 @@ function checkApiKey() {
   const urlParams = new URLSearchParams(window.location.search);
   const ideaParam = urlParams.get('idea');
 
-  if (!state.apiKey) {
-    apiKeyModal.classList.remove('hidden');
-    appShell.style.display = 'none';
-  } else {
-    apiKeyModal.classList.add('hidden');
-    appShell.style.display = 'grid';
-    const pbParam = urlParams.get('playbook');
-    loadApp(pbParam);
+  // Remove the initial API key blocker to allow Free Preview Tier
+  apiKeyModal.classList.add('hidden');
+  appShell.style.display = 'grid';
+  
+  const pbParam = urlParams.get('playbook');
+  loadApp(pbParam);
 
     // If an idea was passed from the landing page, auto-start a new project
     if (ideaParam && !window.ideaProcessed) {

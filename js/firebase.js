@@ -23,6 +23,7 @@ async function syncContextToFirestore() {
   try {
     await db.collection('users').doc(window.currentUser.uid).set({
       context: state.context,
+      previewMessagesUsed: state.previewMessagesUsed,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   } catch(e) {
@@ -55,6 +56,7 @@ async function syncFromFirestore(uid) {
     if (doc.exists) {
       const data = doc.data();
       if (data.context) state.context = data.context;
+      if (data.previewMessagesUsed !== undefined) state.previewMessagesUsed = data.previewMessagesUsed;
       
       // We no longer read state.projects from the main doc.
       // We will now read from the subcollection.

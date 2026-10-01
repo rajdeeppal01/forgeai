@@ -133,22 +133,39 @@ End the message by asking the user for their thoughts or feedback on this plan, 
 IMPORTANT: Do NOT include any internal thoughts, self-evaluations, or "Tone Checks" in your response. Output ONLY the final message meant for the user.`;
 
   try {
-    const apiKey = state.apiKey;
-    if (!apiKey || apiKey === 'FREE_PREVIEW_KEY_PLACEHOLDER') {
-      throw new Error("No API key provided.");
-    }
+    let res;
+    const bodyPayload = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1000,
+      }
+    };
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1000,
-        }
-      })
-    });
+    if (!state.apiKey) {
+      if (state.previewMessagesUsed >= 10) {
+        showToast('You have used your 10 free preview messages. Please add your API key in Settings.');
+        apiKeyModal.classList.remove('hidden');
+        throw new Error("Free preview limit reached.");
+      }
+      // Use the Vercel API proxy
+      res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyPayload)
+      });
+      // Increment free usage
+      state.previewMessagesUsed++;
+      LS.set('previewMessagesUsed', state.previewMessagesUsed);
+      if (typeof syncContextToFirestore === 'function') syncContextToFirestore();
+    } else {
+      // Use user's direct API key
+      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${state.apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyPayload)
+      });
+    }
 
     removeTypingIndicator();
 
@@ -378,7 +395,6 @@ sendBtn?.addEventListener('click', sendMessage);
 async function sendMessage() {
   const text = chatInput.value.trim();
   if (!text || state.isLoading) return;
-  if (!state.apiKey) { showToast('⚠ Please add your API key first.'); return; }
 
   // Free tier limit (20/day)
   const today = new Date().toDateString();
@@ -498,33 +514,21 @@ async function sendMessage() {
 
 // ── Gemini API Call ───────────────────────────
 async function callGemini(systemInstruction, messages) {
-  if (state.apiKey === "FREE_PREVIEW_KEY_PLACEHOLDER") {
-    // Free Preview Mock Response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        state.apiKey = ''; // Reset so they need a real key next time
-        LS.set('apiKey', '');
-        resolve(`I love this idea! I've gone ahead and broken it down into a structured Company Brief for us.
-
-[ACTION_ITEM: Startup Context]
-{
-  "name": "Project Alpha",
-  "stage": "Idea / Pre-Product",
-  "market": "Consumers / B2C",
-  "problem": "We are building a platform that solves the core problem you just described.",
-  "revenue": "$0",
-  "goal": "Launch MVP and get first 10 paying customers"
-}
-[/ACTION_ITEM]
-
-Review the brief above and click **Approve & Save** to add it to your Startup Context. Once you do that, we can move into the Product or Growth departments. 
-
-*(Note: To continue building, please click Settings and add your free Google Gemini API key!)*`);
-      }, 2000);
-    });
+  let url;
+  if (!state.apiKey) {
+    if (state.previewMessagesUsed >= 10) {
+      showToast('You have used your 10 free preview messages. Please add your API key in Settings.');
+      apiKeyModal.classList.remove('hidden');
+      throw new Error("Free preview limit reached.");
+    }
+    url = '/api/generate';
+    // Increment free usage
+    state.previewMessagesUsed++;
+    LS.set('previewMessagesUsed', state.previewMessagesUsed);
+    if (typeof syncContextToFirestore === 'function') syncContextToFirestore();
+  } else {
+    url = `https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${state.apiKey}`;
   }
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${state.model}:generateContent?key=${state.apiKey}`;
 
   // Convert messages to Gemini format
   // Don't include the last message (it's the user's latest) - we build the history

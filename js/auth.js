@@ -121,7 +121,6 @@ if (changeKeyBtn) {
   changeKeyBtn.addEventListener('click', () => {
     state.apiKey = '';
     LS.remove('apiKey');
-    appShell.style.display = 'none';
     apiKeyModal.classList.remove('hidden');
     apiKeyInput.value = '';
     apiKeyError.textContent = '';
