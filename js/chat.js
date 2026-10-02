@@ -122,15 +122,28 @@ async function generateCustomPlaybookGreeting(pb) {
   showTypingIndicator();
   
   const ctxString = buildContextString();
-  const prompt = `You are an elite startup advisor and VC. The user has opened the "${pb.name}" department playbook.
+  let prompt = `You are an elite startup advisor and VC. The user has opened the "${pb.name}" department playbook.
   
 Here is their startup context:${ctxString}
 
-Please generate a highly customized, actionable 3-step initial playbook for ${pb.name} tailored specifically to this startup's context. 
+`;
+
+  if (pb.steps && pb.steps.length > 0) {
+    prompt += `You are going to guide them through a structured ${pb.steps.length}-step playbook. 
+The steps are:
+${pb.steps.map((s, i) => `Step ${i + 1}: ${s}`).join('\n')}
+
+INSTRUCTIONS FOR THIS MESSAGE:
+Introduce the ${pb.name} playbook briefly, acknowledge their startup context, and then IMMEDIATELY ask them the question for Step 1.
+DO NOT provide the answers to the steps. DO NOT ask multiple steps at once. Wait for their response to Step 1.
+IMPORTANT: Output ONLY the final message meant for the user.`;
+  } else {
+    prompt += `Please generate a highly customized, actionable 3-step initial playbook for ${pb.name} tailored specifically to this startup's context. 
 Be concise, use markdown formatting, and make the advice highly specific to their stated problem and market.
 End the message by asking the user for their thoughts or feedback on this plan, or what they'd like to dive into first.
 
 IMPORTANT: Do NOT include any internal thoughts, self-evaluations, or "Tone Checks" in your response. Output ONLY the final message meant for the user.`;
+  }
 
   try {
     let res;
@@ -480,7 +493,21 @@ async function sendMessage() {
 
   // Build system prompt
   const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
-  const systemPrompt = pb.system + buildContextString();
+  let systemPrompt = pb.system + buildContextString();
+
+  if (pb.steps && pb.steps.length > 0) {
+    systemPrompt += `\n\n### WIZARD MODE INSTRUCTIONS ###
+Your primary objective is to guide the user through a structured ${pb.steps.length}-step playbook.
+The steps are:
+${pb.steps.map((s, i) => `Step ${i + 1}: ${s}`).join('\n')}
+
+RULES:
+1. If this is the beginning of the conversation, start by asking the question for Step 1.
+2. Wait for the user's response. Evaluate their answer, provide brief expert feedback, and ONLY THEN ask the question for the next step.
+3. NEVER ask multiple steps at once. Strictly go one by one.
+4. If their answer is too vague, push back and ask them to clarify before moving to the next step.
+5. Once all steps are complete, provide a final synthesized summary of everything discussed and clearly state that the playbook is complete.`;
+  }
 
   // Call API
   state.isLoading = true;
