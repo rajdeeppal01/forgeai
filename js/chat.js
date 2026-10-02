@@ -768,46 +768,15 @@ exportBtn?.addEventListener('click', () => {
   showToast('✓ Chat exported as Markdown');
 });
 
-// ── Export Chat (PDF) ─────────────────────────
 exportPdfBtn?.addEventListener('click', () => {
   if (state.messages.length === 0) { showToast('No messages to export.'); return; }
-  
-  if (typeof html2pdf === 'undefined') {
-    showToast('⚠ PDF library is still loading. Try again in a moment.');
-    return;
-  }
-  
-  showToast('Generating PDF...');
-  const pb = PLAYBOOKS.find(p => p.key === state.activePlaybook) || PLAYBOOKS[0];
-  const filename = `forgeai-${pb.key}-${Date.now()}.pdf`;
-  
-  const opt = {
-    margin:       10,
-    filename:     filename,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0f1423' },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  // Clone the messages div so we can style it for PDF without messing up the UI
-  const elementToPrint = chatMessages.cloneNode(true);
-  elementToPrint.style.display = 'block';
-  elementToPrint.style.height = 'auto';
-  elementToPrint.style.overflow = 'visible';
-  elementToPrint.style.padding = '20px';
-  elementToPrint.style.backgroundColor = '#0f1423'; 
-  
-  // Clean up action buttons in the clone
-  const actionBtns = elementToPrint.querySelectorAll('.msg-actions');
-  actionBtns.forEach(btn => btn.remove());
-  
-  html2pdf().set(opt).from(elementToPrint).save().then(() => {
-    showToast('✓ PDF Exported');
-  }).catch(err => {
-    console.error(err);
-    showToast('⚠ Error generating PDF');
-  });
+  showToast('Preparing PDF export...');
+  setTimeout(() => {
+    window.print();
+  }, 500);
 });
+
+// html2pdf logic removed in favor of window.print()
 
 // ── Clear Chat ────────────────────────────────
 // ── Clear Chat ────────────────────────────────

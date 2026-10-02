@@ -367,3 +367,45 @@ h1,h2,h3,h4,h5,h6 { line-height: 1.2; font-weight: 700; }
   .grid-2 { grid-template-columns: 1fr; }
   .section { padding: 48px 0; }
 }
+
+/* ── Print Styles (Export to PDF) ────────────── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #chatMessages, #chatMessages * {
+    visibility: visible;
+  }
+  #chatMessages {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+    background: white;
+    color: black;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .app-shell, .chat-container, .chat-area {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .top-bar, .chat-input-container, .sidebar, .context-panel, .welcome-screen, .dashboard-screen {
+    display: none !important;
+  }
+  .msg-row {
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  .md-content p, .md-content h1, .md-content h2, .md-content h3, .md-content li {
+    color: black !important;
+  }
+  .msg-bubble {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    background: #f9f9f9 !important;
+    color: black !important;
+  }
+}
