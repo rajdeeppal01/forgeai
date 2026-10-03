@@ -51,7 +51,7 @@
       </div>
       <div class="nav-actions" style="display: flex; gap: 16px; align-items: center;">
         <a href="app.html" style="color: white; font-weight: 500; font-size: 0.95rem;">Log in</a>
-        <a href="app.html?auth=register" class="btn btn-primary" style="background: white; color: black; border-radius: 20px; padding: 8px 16px; font-weight: 600; font-size: 0.95rem;">Get started</a>
+        <a href="app.html?auth=register" class="btn btn-primary" style="background: white; color: black; border-radius: 20px; padding: 8px 16px; font-weight: 600; font-size: 0.95rem;">Start Building Free →</a>
       </div>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -72,8 +72,12 @@
     <div class="hero-grid"></div>
     <div class="container" style="display: flex; flex-direction: column; align-items: center; max-width: 800px; margin: 0 auto; gap: 40px; justify-content: center;">
       <div class="hero-content" style="align-items: center; width: 100%; display: flex; flex-direction: column; text-align: center;">
-        <h1 class="hero-headline" style="font-size: clamp(3.5rem, 6.5vw, 6.5rem); letter-spacing: -0.05em; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 16px;">What are we building today?</h1>
-        <p style="font-size: 1.35rem; color: rgba(255,255,255,0.9); font-weight: 400; margin-bottom: 48px;">Instantly generate pitch decks, business models, and go-to-market strategies.</p>
+        <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 14px; background:rgba(255,255,255,0.1); border-radius:100px; margin-bottom:24px; border:1px solid rgba(255,255,255,0.2);">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#34D399; box-shadow:0 0 10px #34D399;"></span>
+          <span style="font-size:0.85rem; font-weight:600; color:white;">ForgeAI Beta is now open</span>
+        </div>
+        <h1 class="hero-headline" style="font-size: clamp(3rem, 5.5vw, 5.5rem); letter-spacing: -0.04em; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 20px;">Build your startup's <span class="text-gradient">operating system</span> with AI.</h1>
+        <p style="font-size: 1.25rem; color: rgba(255,255,255,0.8); font-weight: 400; margin-bottom: 40px; max-width: 600px;">Instantly generate pitch decks, GTM strategies, and financial models using structured playbooks powered by Google Gemini.</p>
         
         <form class="hero-prompt-form" id="heroPromptForm" style="width: 100%; max-width: 760px; margin: 0 auto;" onsubmit="event.preventDefault(); window.location.href='app.html?idea=' + encodeURIComponent(document.getElementById('heroIdeaInput').value);">
           <div class="hero-prompt-wrapper" style="border-radius: 24px; padding: 20px 24px; background: rgba(26, 26, 26, 0.9); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column;; max-width: 100%; width: 100%; margin: 0 auto;">
@@ -94,12 +98,24 @@
               </button>
             </div>
           </div>
+          <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-top:16px;">✨ No credit card or API key required. Try 10 prompts for free.</p>
         </form>
       </div>
     </div>
   </header>
 
-
+  <!-- ── Authority Social Proof ───────────────── -->
+  <section class="section" style="padding: 30px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);">
+    <div class="container text-center">
+      <p style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px;">Built for scale using frameworks from</p>
+      <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; opacity: 0.6; filter: grayscale(100%);">
+        <h4 style="font-size: 1.2rem; font-weight: 700; color: white;">Y Combinator</h4>
+        <h4 style="font-size: 1.2rem; font-weight: 700; color: white;">Techstars</h4>
+        <h4 style="font-size: 1.2rem; font-weight: 700; color: white;">Sequoia</h4>
+        <h4 style="font-size: 1.2rem; font-weight: 700; color: white;">a16z</h4>
+      </div>
+    </div>
+  </section>
 
   <!-- ── Features ────────────────────────────── -->
   <main id="features" class="section features-alternating">
@@ -281,7 +297,7 @@
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>Yes | you'll need a free Google Gemini API key from <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a>. It's free, takes 60 seconds, and gives you generous daily usage. Enter it once in Settings and you're good to go.</p>
+            <p><strong>No! You get 10 free playbook generations instantly.</strong> After that, you'll need a free Google Gemini API key from <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a>. It takes 60 seconds to get one and gives you extremely generous free daily limits.</p>
           </div>
         </div>
         <div class="faq-item">
@@ -304,11 +320,11 @@
         </div>
         <div class="faq-item">
           <button class="faq-question" aria-expanded="false">
-            Can I cancel anytime?
+            Why wouldn't I just use ChatGPT?
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>Yes, always. ForgeAI is completely free to use right now with your own Gemini API key.</p>
+            <p>ChatGPT is a blank canvas. To get good results, you have to write complex, 500-word prompts and constantly remind it of your business model. ForgeAI uses structured, step-by-step Playbooks and persistent memory, so you just answer simple questions and the AI does the heavy lifting.</p>
           </div>
         </div>
       </div>
