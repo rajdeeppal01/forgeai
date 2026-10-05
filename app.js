@@ -85,7 +85,6 @@ function checkApiKey() {
         window.history.replaceState({}, document.title, window.location.pathname);
       }, 500);
     }
-  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
