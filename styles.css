@@ -108,10 +108,16 @@ img { display: block; max-width: 100%; }
 /* ── Typography ──────────────────────────────── */
 h1,h2,h3,h4,h5,h6 { line-height: 1.2; font-weight: 700; }
 .text-gradient {
-  color: var(--text-primary);
+  background: linear-gradient(to right, #34d399, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 .text-gradient-warm {
-  color: var(--text-primary);
+  background: linear-gradient(to right, #f59e0b, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 /* ── Glass Card ──────────────────────────────── */
